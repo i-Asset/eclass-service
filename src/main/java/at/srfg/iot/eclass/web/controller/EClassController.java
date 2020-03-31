@@ -5,6 +5,8 @@ import java.util.List;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import at.srfg.iot.eclass.service.ClassService;
 
 @RestController
+@Api(value = "Eclass Controller",
+		description = "API to perform Eclass operations")
 public class EClassController {
 	@Autowired
 	private ClassService classService;
@@ -39,7 +43,7 @@ public class EClassController {
 	public ResponseEntity<?> getValue(@RequestParam("irdiVA") String irdi) {
 		return ResponseEntity.of(classService.getValue(irdi));
 	}
-	
+
 	@Produces(MediaType.APPLICATION_JSON)
 	@GetMapping("/values")
 	public ResponseEntity<List<?>> getPropertyValues(@RequestParam("irdiCC") String irdicc, @RequestParam("irdiPR") String irdipr) {
@@ -50,5 +54,5 @@ public class EClassController {
 	public ResponseEntity<?> getUnit(@RequestParam("irdiUN") String irdi) {
 		return ResponseEntity.of(classService.getUnit(irdi));
 	}
-	
+
 }
