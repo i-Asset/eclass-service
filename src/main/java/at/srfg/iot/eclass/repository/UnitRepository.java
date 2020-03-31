@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
-import at.srfg.iot.eclass.model.Unit;
+import at.srfg.iot.eclass.model.PropertyUnit;
 
-public interface UnitRepository extends CrudRepository<Unit, String>{
-	Optional<Unit> findByEceCode(String eceCode);
-	List<Unit> findByEceName(String eceName);
+public interface UnitRepository extends CrudRepository<PropertyUnit, String>{
+	Optional<PropertyUnit> findByEceCode(String eceCode);
+	List<PropertyUnit> findByEceName(String eceName);
 }

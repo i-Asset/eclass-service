@@ -6,9 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 import at.srfg.iot.eclass.model.ClassificationClass;
 import at.srfg.iot.eclass.model.ClassificationClassPropertyValue;
 import at.srfg.iot.eclass.model.ClassificationClassPropertyValuePK;
-import at.srfg.iot.eclass.model.Property;
+import at.srfg.iot.eclass.model.PropertyDefinition;
 
 public interface ClassificationClassPropertyValueRepository extends CrudRepository<ClassificationClassPropertyValue, ClassificationClassPropertyValuePK> {
 
-	List<ClassificationClassPropertyValue> findByClassificationClassAndProperty(ClassificationClass cc, Property pr);
+	List<ClassificationClassPropertyValue> findByClassificationClassAndProperty(ClassificationClass cc, PropertyDefinition pr);
 }
