@@ -3,18 +3,17 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>eclass-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>EClass Service</name>
-	<groupId>at.srfg.iot</groupId>
-	<description>Asset Registry</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.1.RELEASE</version>
+		<version>2.2.5.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<groupId>at.srfg.iot</groupId>
+	<artifactId>eclass-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>EClass Service</name>
+	<description>Semantic eCl@ss Service)</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -169,6 +168,11 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>at.srfg.iot.iasset</groupId>
+			<artifactId>eclass-data-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

@@ -6,28 +6,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import at.srfg.iot.eclass.model.ClassificationClass;
-import at.srfg.iot.eclass.model.Property;
-import at.srfg.iot.eclass.model.Value;
+import at.srfg.iot.eclass.model.PropertyDefinition;
+import at.srfg.iot.eclass.model.PropertyValue;
 
-public interface ValueRepository extends CrudRepository<Value, String>{
-	Value findByIrdiVA(String irdiVA);
-	List<Value> findByIdentifier(String eceCode);
+public interface ValueRepository extends CrudRepository<PropertyValue, String>{
+	PropertyValue findByIrdiVA(String irdiVA);
+	List<PropertyValue> findByIdentifier(String eceCode);
 	/**
 	 * Retrieve the available/allowed values for the combination of {@link ClassificationClass} and
-	 * {@link Property}.
+	 * {@link PropertyDefinition}.
 	 * @param irdiCC The IRDI pointing to the {@link ClassificationClass}
-	 * @param irdiPR The IRDI pointing to the {@link Property}
+	 * @param irdiPR The IRDI pointing to the {@link PropertyDefinition}
 	 * @return
 	 */
 	@Query("SELECT ccprva.value FROM ClassificationClassPropertyValue ccprva WHERE ccprva.id.irdiCC = ?1 and ccprva.id.irdiPR =?2 ")
-	List<Value> getValues(String irdiCC, String irdiPR);
+	List<PropertyValue> getValues(String irdiCC, String irdiPR);
 	/**
 	 * Retrieve the available/allowed values for the combination of {@link ClassificationClass} and
-	 * {@link Property}.
+	 * {@link PropertyDefinition}.
 	 * @param irdiCC The {@link ClassificationClass}
-	 * @param irdiPR The {@link Property}
+	 * @param irdiPR The {@link PropertyDefinition}
 	 * @return
 	 */
 	@Query("SELECT ccprva.value FROM ClassificationClassPropertyValue ccprva WHERE ccprva.classificationClass = ?1 and ccprva.property =?2 ")
-	List<Value> getValues(ClassificationClass classificationClass, Property property);
+	List<PropertyValue> getValues(ClassificationClass classificationClass, PropertyDefinition property);
 }

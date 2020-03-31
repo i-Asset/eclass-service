@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import at.srfg.iot.eclass.model.ClassificationClass;
-import at.srfg.iot.eclass.model.Property;
-import at.srfg.iot.eclass.model.Unit;
-import at.srfg.iot.eclass.model.Value;
+import at.srfg.iot.eclass.model.PropertyDefinition;
+import at.srfg.iot.eclass.model.PropertyUnit;
+import at.srfg.iot.eclass.model.PropertyValue;
 import at.srfg.iot.eclass.repository.ClassificationClassRepository;
 import at.srfg.iot.eclass.repository.PropertyRepository;
 import at.srfg.iot.eclass.repository.UnitRepository;
@@ -29,20 +29,20 @@ public class ClassService {
 	public Optional<ClassificationClass> getClassification(String irdiCC) {
 		return classficationClassRepo.findById(irdiCC);
 	}
-	public Optional<Property> getProperty(String irdiPR) {
+	public Optional<PropertyDefinition> getProperty(String irdiPR) {
 		return propertyRepo.findById(irdiPR);		
 	}
-	public Optional<Value> getValue(String irdiVA) {
+	public Optional<PropertyValue> getValue(String irdiVA) {
 		return valueRepo.findById(irdiVA);
 	}
-	public List<Value> getPropertyValues(String irdiCC, String irdiPR) {
+	public List<PropertyValue> getPropertyValues(String irdiCC, String irdiPR) {
 		return valueRepo.getValues(irdiCC, irdiPR);
 	}
 
-	public Optional<Unit> getUnit(String irdiUN) {
+	public Optional<PropertyUnit> getUnit(String irdiUN) {
 		return unitRepo.findById(irdiUN);
 	}
-	public List<Property> getProperties(String irdiCC) {
+	public List<PropertyDefinition> getProperties(String irdiCC) {
 		return propertyRepo.findByIrdiCC(irdiCC);
 	}
 }

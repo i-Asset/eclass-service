@@ -6,29 +6,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import at.srfg.iot.eclass.model.ClassificationClass;
-import at.srfg.iot.eclass.model.Property;
+import at.srfg.iot.eclass.model.PropertyDefinition;
 /**
- * JPA Repository for working with {@link Property} entities.
+ * JPA Repository for working with {@link PropertyDefinition} entities.
  * @author dglachs
  *
  */
-public interface PropertyRepository extends CrudRepository<Property, String>{
-	Property findByIrdiPR(String irdiPR);
-	List<Property> findByIdPR(String idPR);
-	List<Property> findByIdentifier(String identifier);
+public interface PropertyRepository extends CrudRepository<PropertyDefinition, String>{
+	PropertyDefinition findByIrdiPR(String irdiPR);
+	List<PropertyDefinition> findByIdPR(String idPR);
+	List<PropertyDefinition> findByIdentifier(String identifier);
 	@Query("SELECT ccpr.property FROM ClassificationClassProperty ccpr WHERE ccpr.idCC = ?1")
-	List<Property> findByIdCC(String idCC);
+	List<PropertyDefinition> findByIdCC(String idCC);
 	@Query("SELECT ccpr.property FROM ClassificationClassProperty ccpr WHERE ccpr.classCodedName = ?1")
-	List<Property> findByClassCodedName(String classCodedName);
+	List<PropertyDefinition> findByClassCodedName(String classCodedName);
 	@Query("SELECT ccpr.property FROM ClassificationClassProperty ccpr WHERE ccpr.classificationClass = ?1")
-	List<Property> findByClassificationClass(ClassificationClass classificationClass);
+	List<PropertyDefinition> findByClassificationClass(ClassificationClass classificationClass);
 	@Query("SELECT ccpr.property FROM ClassificationClassProperty ccpr WHERE ccpr.id.irdiCC = ?1")
-	List<Property> findByIrdiCC(String irdiCC);
+	List<PropertyDefinition> findByIrdiCC(String irdiCC);
 	/**
 	 * Retrieve all properties by category
 	 * @param category
 	 * @return
 	 */
-	List<Property> findByCategory(String category);
+	List<PropertyDefinition> findByCategory(String category);
 	
 }
