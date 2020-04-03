@@ -65,6 +65,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -76,68 +82,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.8.0</version>
-		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
-		 -->
-
-
-		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.8.0</version>
-		</dependency>
-
-		<!--<dependency>-->
-		<!--<groupId>org.springframework.boot</groupId>-->
-		<!--<artifactId>spring-boot-devtools</artifactId>-->
-		<!--<scope>runtime</scope>-->
-		<!--<optional>true</optional>-->
-		<!--</dependency>-->
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!--	<dependency>
-                <groupId>org.eclipse.basyx</groupId>
-                <artifactId>basyx.sdk</artifactId>
-                &lt;!&ndash;<version>0.0.1-SNAPSHOT</version>&ndash;&gt;
-            </dependency>-->
-
+		
 		<!--Spring Cloud-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -147,6 +92,28 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
+		
+		<!-- Security, JWT -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.8.0</version>
+		</dependency>
+
+		<!--Database Driver (Postgres)-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+
 
 		<!--swagger dependencies-->
 		<dependency>
@@ -169,6 +136,7 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1</version>
 		</dependency>
+		<!-- data model (i-asset eclass) -->
 		<dependency>
 			<groupId>at.srfg.iot.iasset</groupId>
 			<artifactId>eclass-data-model</artifactId>
@@ -176,14 +144,6 @@
 		</dependency>
 	</dependencies>
 
-	<!--<build>-->
-	<!--<plugins>-->
-	<!--<plugin>-->
-	<!--<groupId>org.springframework.boot</groupId>-->
-	<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-	<!--</plugin>-->
-	<!--</plugins>-->
-	<!--</build>-->
 
 	<build>
 		<finalName>app</finalName>
