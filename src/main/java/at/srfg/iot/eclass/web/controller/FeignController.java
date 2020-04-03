@@ -36,7 +36,7 @@ public class FeignController implements EClassService {
 	}
 	@Produces(MediaType.APPLICATION_JSON)
 	@GetMapping("/feign/properties")
-	public List<PropertyDefinition> getValues(@RequestParam("irdiCC") String irdi) {
+	public List<PropertyDefinition> getPropertiesForClass(@RequestParam("irdiCC") String irdi) {
 		return classService.getProperties(irdi);
 	}
 	@Produces(MediaType.APPLICATION_JSON)
