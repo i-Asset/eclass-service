@@ -58,5 +58,5 @@ management:
         include: '*'
 nimble:
   corsEnabled: true
-  platformHost: ${ECLASS_SERVICE_URL:http://localhost:8084}
+  platformHost: ${ECLASS_SERVICE_URL: http://localhost:8084}
 
