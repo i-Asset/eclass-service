@@ -11,6 +11,22 @@ node('iasset-jenkins-slave') {
             git(url: 'https://github.com/i-Asset/eclass-service.git', branch: env.BRANCH_NAME)
         }
 
+        stage('Build Dependencies') {
+            sh 'rm -rf solr-model'
+            sh 'git clone https://github.com/i-Asset/solr-model.git'
+            dir('solr-model') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+
+            sh 'rm -rf common'
+            sh 'git clone https://github.com/i-Asset/common.git'
+            dir('common') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+        }
+
         stage('Build Java') {
             sh 'mvn clean install -DskipTests'
         }
@@ -37,6 +53,22 @@ node('iasset-jenkins-slave') {
             git(url: 'https://github.com/i-Asset/eclass-service.git', branch: env.BRANCH_NAME)
         }
 
+        stage('Build Dependencies') {
+            sh 'rm -rf solr-model'
+            sh 'git clone https://github.com/i-Asset/solr-model.git'
+            dir('solr-model') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+
+            sh 'rm -rf common'
+            sh 'git clone https://github.com/i-Asset/common.git'
+            dir('common') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+        }
+
         stage('Build Java') {
             sh 'mvn clean install -DskipTests'
         }
@@ -59,9 +91,21 @@ node('iasset-jenkins-slave') {
             sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=' + env.TAG_NAME
         }
 
-//        stage('Run Tests') {
-//            sh 'mvn clean test'
-//        }
+        stage('Build Dependencies') {
+            sh 'rm -rf solr-model'
+            sh 'git clone https://github.com/i-Asset/solr-model.git'
+            dir('solr-model') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+
+            sh 'rm -rf common'
+            sh 'git clone https://github.com/i-Asset/common.git'
+            dir('common') {
+                sh 'git checkout ' + env.BRANCH_NAME
+                sh 'mvn clean install'
+            }
+        }
 
         stage('Build Java') {
             sh 'mvn clean install -DskipTests'
