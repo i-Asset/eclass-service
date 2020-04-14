@@ -18,6 +18,7 @@ import at.srfg.iot.eclass.service.ClassService;
 @RestController
 @Api(value = "Eclass Controller",
 		description = "API to perform Eclass operations")
+@Deprecated
 public class EClassController {
 	@Autowired
 	private ClassService classService;
