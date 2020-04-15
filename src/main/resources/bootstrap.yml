@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: eclass-service
+    name: semantic-lookup-service
   cloud:
     config:
       enabled: ${CONFIG_SERVER_ENABLED:true}
