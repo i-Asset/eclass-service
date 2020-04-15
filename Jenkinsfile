@@ -40,7 +40,7 @@ node('iasset-jenkins-slave') {
         }
 
         stage('Deploy') {
-            sh 'ssh staging "cd /srv/docker_setup/staging/ && ./run-staging.sh restart-single eclass-service"'
+            sh 'ssh staging "cd /srv/docker-setup/staging/ && ./run-staging.sh restart-single eclass-service"'
         }
     }
 
