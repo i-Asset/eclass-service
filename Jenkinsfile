@@ -8,7 +8,7 @@ node('iasset-jenkins-slave') {
     if (env.BRANCH_NAME == 'staging') {
 
         stage('Clone and Update') {
-            git(url: 'https://github.com/i-Asset/eclass-service.git', branch: env.BRANCH_NAME)
+            git(url: 'https://github.com/i-Asset/semantic-lookup-service.git', branch: env.BRANCH_NAME)
         }
 
         stage('Build Dependencies') {
@@ -36,11 +36,11 @@ node('iasset-jenkins-slave') {
         }
 
         stage('Push Docker') {
-            sh 'docker push iassetplatform/eclass-service:staging'
+            sh 'docker push iassetplatform/semantic-lookup-service:staging'
         }
 
         stage('Deploy') {
-            sh 'ssh staging "cd /srv/docker-setup/staging/ && ./run-staging.sh restart-single eclass-service"'
+            sh 'ssh staging "cd /srv/docker-setup/staging/ && ./run-staging.sh restart-single semantic-lookup-service"'
         }
     }
 
@@ -50,7 +50,7 @@ node('iasset-jenkins-slave') {
     if (env.BRANCH_NAME == 'master') {
 
         stage('Clone and Update') {
-            git(url: 'https://github.com/i-Asset/eclass-service.git', branch: env.BRANCH_NAME)
+            git(url: 'https://github.com/i-Asset/semantic-lookup-service.git', branch: env.BRANCH_NAME)
         }
 
         stage('Build Dependencies') {

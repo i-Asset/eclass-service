@@ -10,7 +10,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>at.srfg.iot</groupId>
-	<artifactId>eclass-service</artifactId>
+	<artifactId>semantic-lookup-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>EClass Service</name>
 	<description>Semantic eCl@ss Service)</description>
