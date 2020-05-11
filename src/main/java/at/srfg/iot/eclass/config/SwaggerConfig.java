@@ -26,9 +26,9 @@ public class SwaggerConfig {
 	private String platformHost;
 
 	public static final ApiInfo DEFAULT_API_INFO = new ApiInfoBuilder()
-			.title("Eclass Service API")
+			.title("Common Data Dictionary Service API")
 			.description(
-					"API documentation for Eclass Service's APIs.")
+					"API documentation for Common Data Dictionary Service's APIs.")
 			.version("V1.0.0")
 			.build();
 
