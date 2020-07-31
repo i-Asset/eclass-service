@@ -45,4 +45,20 @@ public class ClassService {
 	public List<PropertyDefinition> getProperties(String irdiCC) {
 		return propertyRepo.findByIrdiCC(irdiCC);
 	}
+	public void setClassification(ClassificationClass classificationClass) {
+		classficationClassRepo.save(classificationClass);
+	}
+	public void setProperty(PropertyDefinition property) {
+		propertyRepo.save(property);
+		if ( property.getUnit() != null ) {
+			
+			setUnit(property.getUnit());
+		}
+	}
+	public void setValue(PropertyValue value) {
+		valueRepo.save(value);
+	}
+	public void setUnit(PropertyUnit unit) {
+		unitRepo.save(unit);
+	}
 }

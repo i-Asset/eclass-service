@@ -19,7 +19,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableSwagger2
 @EntityScan({
-		// holds the E-Class Entities 
+		// holds the E-Class Entities
+		"at.srfg.iot.classification.model",
 		"at.srfg.iot.eclass.model"})
 @ComponentScan({
 		"at.srfg.iot.eclass" })

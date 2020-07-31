@@ -10,4 +10,6 @@ public interface ClassificationClassRepository extends CrudRepository<Classifica
 	ClassificationClass findByIrdiCC(String irdiCC);
 	List<ClassificationClass> findByIdCC(String idCC);
 	List<ClassificationClass> findByIdentifier(String identifier);
+	List<ClassificationClass> findByCodedNameLike(String codedName);
+	List<ClassificationClass> findByLevelAndCodedNameLike(int level, String codedName);
 }
