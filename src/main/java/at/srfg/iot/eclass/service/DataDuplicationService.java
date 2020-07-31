@@ -92,6 +92,10 @@ public class DataDuplicationService {
 			prop.addPropertyValue(vt);
 			
 		};
+		if ( eClass.getUnit() != null ) {
+			PropertyUnit unit = copyPropertyUnit(eClass.getUnit());
+			prop.setUnit(unit);
+		}
 		conceptPropertyRepo.save(prop);
 		return prop;
 	}
@@ -99,7 +103,7 @@ public class DataDuplicationService {
 		PropertyUnit target = new PropertyUnit(eClass.getIrdiUN());
 		//target.setVersionDate(eClass.getVersionDate());
 		//target.setRevisionNumber(eClass.get);
-		target.setDescription("en", eClass.getStructuredNaming(), eClass.getDefinition());
+		target.setDescription("en", eClass.getShortName(), eClass.getDefinition());
 		target.setSiName(eClass.getSiName());
 		target.setSiNotation(eClass.getSiNotation());
 		target.setEceCode(eClass.getEceCode());

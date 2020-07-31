@@ -27,5 +27,27 @@ public class SemanticConceptController {
 		return true;
 	}
 
+	@ApiOperation(
+			value = "Duplicate Units",
+			notes = "The assigned PropertyDefinitions for a given ClassificationClass")
+	@RequestMapping(
+			method = RequestMethod.POST,
+			path="/duplicate/unit"			)
+	public int duplicateUnit() {
+		
+		int copied = duplicate.copyPropertyUnit();
+		return copied;
+	}
+	@ApiOperation(
+			value = "Duplicate Properties",
+			notes = "The assigned PropertyDefinitions for a given ClassificationClass")
+	@RequestMapping(
+			method = RequestMethod.POST,
+			path="/duplicate/property"			)
+	public int duplicateProperty() {
+		
+		int copied = duplicate.copyProperty();
+		return copied;
+	}
 	
 }
