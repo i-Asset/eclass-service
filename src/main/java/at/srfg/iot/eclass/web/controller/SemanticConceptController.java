@@ -1,5 +1,7 @@
 package at.srfg.iot.eclass.web.controller;
 
+import java.util.HashSet;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +25,7 @@ public class SemanticConceptController {
 			path="/duplicate/class"			)
 	public boolean duplicateClasses(@RequestParam(name="codedNamePrefix") String prefix) {
 		
-		duplicate.copyConceptClass(null, prefix);
+		duplicate.copyConceptClass(null);
 		return true;
 	}
 
@@ -47,6 +49,17 @@ public class SemanticConceptController {
 	public int duplicateProperty() {
 		
 		int copied = duplicate.copyProperty();
+		return copied;
+	}
+	@ApiOperation(
+			value = "Duplicate Class Properties assignments",
+			notes = "The assigned PropertyDefinitions for a given ClassificationClass")
+	@RequestMapping(
+			method = RequestMethod.POST,
+			path="/duplicate/class/property"			)
+	public int duplicateClassProperty(@RequestParam(name="codedNamePrefix") String prefix) {
+		
+		int copied = duplicate.copyClassPropertyAssignment(null, new HashSet<String>());
 		return copied;
 	}
 	

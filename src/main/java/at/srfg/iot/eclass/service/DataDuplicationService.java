@@ -1,18 +1,31 @@
 package at.srfg.iot.eclass.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import at.srfg.iot.classification.model.ClassProperty;
+import at.srfg.iot.classification.model.ClassPropertyPK;
+import at.srfg.iot.classification.model.ClassPropertyValue;
+import at.srfg.iot.classification.model.ClassPropertyValuePK;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.Property;
 import at.srfg.iot.classification.model.PropertyUnit;
+import at.srfg.iot.classification.model.PropertyValue;
 import at.srfg.iot.eclass.model.ClassificationClass;
+import at.srfg.iot.eclass.model.ClassificationClassPropertyValue;
 import at.srfg.iot.eclass.model.PropertyDefinition;
-import at.srfg.iot.eclass.model.PropertyValue;
+import at.srfg.iot.eclass.repository.ClassPropertyRepository;
+import at.srfg.iot.eclass.repository.ClassPropertyValueRepository;
+import at.srfg.iot.eclass.repository.ClassificationClassPropertyRepository;
+import at.srfg.iot.eclass.repository.ClassificationClassPropertyValueRepository;
 import at.srfg.iot.eclass.repository.ClassificationClassRepository;
 import at.srfg.iot.eclass.repository.ConceptClassRepository;
 import at.srfg.iot.eclass.repository.ConceptRepository;
@@ -25,11 +38,16 @@ public class DataDuplicationService {
 	@Autowired
 	private ClassificationClassRepository classficationClassRepo;
 	@Autowired
+	private ClassificationClassPropertyRepository classificationClassPropertyRepo;
+	@Autowired
+	private ClassificationClassPropertyValueRepository classificationClassPropertyValueRepo;
+	@Autowired
 	private PropertyRepository propertyRepo;
 	@Autowired
 	private ValueRepository valueRepo;
 	@Autowired
 	private UnitRepository unitRepo;
+	// 
 	@Autowired
 	private ConceptRepository<Property> conceptPropertyRepo;
 	@Autowired
@@ -39,13 +57,20 @@ public class DataDuplicationService {
 	@Autowired 
 	private ConceptClassRepository conceptRepository;
 	
+	
+	@Autowired
+	private ClassPropertyRepository classPropertyRepo;
+	@Autowired
+	private ClassPropertyValueRepository classPropertyValueRepo;
+	
+	
 	public int copyProperty() {
 		int count = 0;
 		Iterator<PropertyDefinition> valueIterator = propertyRepo.findAll().iterator();
 		while (valueIterator.hasNext()) {
 			PropertyDefinition eClass = valueIterator.next();
-			// just copy the values
-			copyProperty(eClass);
+			
+			Property property = fromPropertyDefinition(eClass);
 			count++;
 		}
 		return count;
@@ -56,7 +81,7 @@ public class DataDuplicationService {
 		while (valueIterator.hasNext()) {
 			at.srfg.iot.eclass.model.PropertyUnit eClass = valueIterator.next();
 			// just copy the values
-			copyPropertyUnit(eClass);
+			duplicatePropertyUnit(eClass);
 			i++;
 		}
 		return i;
@@ -64,16 +89,16 @@ public class DataDuplicationService {
 
 	public int copyPropertyValues() {
 		int i =0;
-		Iterator<PropertyValue> valueIterator = valueRepo.findAll().iterator();
+		Iterator<at.srfg.iot.eclass.model.PropertyValue> valueIterator = valueRepo.findAll().iterator();
 		while (valueIterator.hasNext()) {
-			PropertyValue eClass = valueIterator.next();
+			at.srfg.iot.eclass.model.PropertyValue eClass = valueIterator.next();
 			// just copy the values
-			copyPropertyValue(eClass);
+			duplicatePropertyValue(eClass);
 			i++;
 		}
 		return i;
 	}
-	private Property copyProperty(PropertyDefinition eClass) {
+	private Property duplicateProperty(PropertyDefinition eClass) {
 		Property prop = new Property(eClass.getIrdiPR());
 		prop.setVersionDate(eClass.getVersionDate());
 		prop.setRevisionNumber(eClass.getRevisionNumber());
@@ -86,20 +111,20 @@ public class DataDuplicationService {
 		prop.setShortName(eClass.getShortName());
 		prop.setSourceOfDefinition(eClass.getSourceOfDefinition());
 		// process the values
-		for (PropertyValue v : eClass.getValues() ) {
+		for (at.srfg.iot.eclass.model.PropertyValue v : eClass.getValues() ) {
 			// process property assignment
-			at.srfg.iot.classification.model.PropertyValue vt = copyPropertyValue(v);
+			PropertyValue vt = fromPropertyValue(v);
 			prop.addPropertyValue(vt);
 			
 		};
 		if ( eClass.getUnit() != null ) {
-			PropertyUnit unit = copyPropertyUnit(eClass.getUnit());
+			PropertyUnit unit = fromPropertyUnit(eClass.getUnit());
 			prop.setUnit(unit);
 		}
 		conceptPropertyRepo.save(prop);
 		return prop;
 	}
-	private PropertyUnit copyPropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
+	private PropertyUnit duplicatePropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
 		PropertyUnit target = new PropertyUnit(eClass.getIrdiUN());
 		//target.setVersionDate(eClass.getVersionDate());
 		//target.setRevisionNumber(eClass.get);
@@ -116,8 +141,8 @@ public class DataDuplicationService {
 		conceptPropertyUnitRepo.save(target);
 		return target;
 	}
-	private at.srfg.iot.classification.model.PropertyValue copyPropertyValue(PropertyValue source) {
-		at.srfg.iot.classification.model.PropertyValue target = new at.srfg.iot.classification.model.PropertyValue(source.getIrdiVA());
+	private PropertyValue duplicatePropertyValue(at.srfg.iot.eclass.model.PropertyValue source) {
+		PropertyValue target = new PropertyValue(source.getIrdiVA());
 		target.setVersionDate(source.getVersionDate());
 		target.setRevisionNumber(source.getRevisionNumber());
 		target.setDataType(source.getDataType());
@@ -127,37 +152,98 @@ public class DataDuplicationService {
 		conceptPropertyValueRepo.save(target);
 		return target;
 	}
-	private void processPropertyValues(PropertyDefinition eClass, Property property) {
+	/**
+	 * Copy all concept classes
+	 * @param parent
+	 * @return
+	 */
+	public int copyConceptClass(final ConceptClass parent) {
 		
-	}
-	public int copyConceptClass(ConceptClass parent, String prefix) {
-		prefix = prefix.replace("%", "");
+		String prefix = (parent != null ? parent.getCodedName().substring(0, parent.getLevel()*2) : "");
 		int level = prefix.length()/2;
 		if (! prefix.endsWith("%")) {
 			prefix = prefix+"%";
 		}
-		if ( level > 0 && parent == null) {
-			Optional<ConceptClass> p = conceptRepository.findByLevelAndCodedNameLike(level, prefix).stream().findFirst();
-			if ( p.isPresent()) {
-				parent = p.get();
-			}
-			else {
-				return 0;
-			}
-		}
 		List<ClassificationClass> classes = classficationClassRepo.findByLevelAndCodedNameLike(level+1, prefix);
 		int count = 0;
 		for ( ClassificationClass eClass : classes ) {
-			ConceptClass cClass = duplicateClass(parent, eClass);
+			ConceptClass cClass = fromClassificationClass(parent, eClass);
+			// process the property assignment at the proper level
+			
 			count++;
 			//
-			String extendedPrefix = cClass.getCodedName().substring(0, (level+1)*2);
-			int subCount = copyConceptClass(cClass, extendedPrefix);
-			count+=subCount;
+			if ( eClass.isSubclassPresent()) {
+				int subCount = copyConceptClass(cClass);
+				count+=subCount;
+			}
 		}
 		return count;
 		
 	}
+	
+	private ConceptClass fromClassificationClass(final ConceptClass parent, ClassificationClass eClass) {
+		Optional<ConceptClass> opt = conceptRepository.findById(eClass.getIrdiCC());
+		if ( opt.isPresent() ) {
+			System.out.println(opt.get().getId());
+		}
+		return opt.orElseGet(new Supplier<ConceptClass>() {
+			public ConceptClass get() {
+				return duplicateClass(parent, eClass);
+			}
+		});
+	}
+	private PropertyUnit fromPropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
+		Optional<PropertyUnit> opt = conceptPropertyUnitRepo.findById(eClass.getIrdiUN());
+		return opt.orElseGet(new Supplier<PropertyUnit>() {
+			public PropertyUnit get() {
+				return duplicatePropertyUnit(eClass);
+			}
+		});
+	}
+
+	private PropertyValue fromPropertyValue(at.srfg.iot.eclass.model.PropertyValue eClass) {
+		Optional<PropertyValue> opt = conceptPropertyValueRepo.findById(eClass.getIrdiVA());
+		return opt.orElseGet(new Supplier<PropertyValue>() {
+			public PropertyValue get() {
+				return duplicatePropertyValue(eClass);
+			}
+		});
+	}
+
+	private Property fromPropertyDefinition(PropertyDefinition eClass) {
+		Optional<Property> opt = conceptPropertyRepo.findById(eClass.getIrdiPR());
+		if ( opt.isPresent() ) {
+			System.out.println(opt.get().getId());
+		}
+		return opt.orElseGet(new Supplier<Property>() {
+			public Property get() {
+				return duplicateProperty(eClass);
+			}
+		});
+	}
+	private ClassProperty fromClassificationClassProperty(final ConceptClass cClass, final Property property) {
+		Optional<ClassProperty> opt = classPropertyRepo.findById(new ClassPropertyPK(cClass.getId(), property.getId()));
+		
+		return opt.orElseGet(new Supplier<ClassProperty>() {
+			public ClassProperty get() {
+				ClassProperty classProperty = new ClassProperty(cClass, property);
+				classPropertyRepo.save(classProperty);
+				return classProperty;
+			}
+		});
+	}
+	private ClassPropertyValue fromClassificationClassPropertyValue(final ClassProperty context, final PropertyValue value) {
+		Optional<ClassPropertyValue> opt = classPropertyValueRepo.findById(new ClassPropertyValuePK(context, value));
+		
+		return opt.orElseGet(new Supplier<ClassPropertyValue>() {
+			public ClassPropertyValue get() {
+				ClassPropertyValue classProperty = new ClassPropertyValue(context, value);
+				classPropertyValueRepo.save(classProperty);
+				return classProperty;
+			}
+		});
+	}
+
 	private ConceptClass duplicateClass(ConceptClass parent, ClassificationClass eClass) {
 		ConceptClass cClass = new ConceptClass(parent, eClass.getIrdiCC());
 		cClass.setVersionDate(eClass.getVersionDate());
@@ -172,12 +258,71 @@ public class DataDuplicationService {
 		return cClass;
 		
 	}
-	public void copyClassificationClass(String irdiCC) {
-		Optional<ClassificationClass> cc = classficationClassRepo.findById(irdiCC);
-		if ( cc.isPresent()) {
-			ClassificationClass eClass = cc.get();
-			
-			
+
+	public int copyClassPropertyAssignment(ConceptClass parent, Set<String> parentProcessed) {
+		String prefix = (parent != null ? parent.getCodedName().substring(0, parent.getLevel()*2) : "");
+		int level = prefix.length()/2;
+		if (! prefix.endsWith("%")) {
+			prefix = prefix+"%";
 		}
+		//
+		int count = 0;
+		level++;
+		Set<ConceptClass> postProcess = new HashSet<ConceptClass>();
+		List<ClassificationClass> classes = classficationClassRepo.findByLevelAndCodedNameLike(level, prefix);
+		for ( ClassificationClass eClass : classes ) {
+			Set<String> processed = new HashSet<String>(parentProcessed);
+			ConceptClass conceptClass = fromClassificationClass(parent, eClass);
+			String classCodedNamePrefix = eClass.getCodedName().substring(0, level*2) + "%";
+			List<PropertyDefinition> properties = classificationClassPropertyRepo.findDistinctPropertyByClassCodedNameLike(classCodedNamePrefix);
+			for ( PropertyDefinition eClassProperty: properties ) {
+				if ( ! processed.contains(eClassProperty.getIrdiPR())) {
+					long usageCount = classificationClassPropertyRepo.countByPropertyAndClassCodedNameLike(eClassProperty, classCodedNamePrefix);
+					long subClassCount = classficationClassRepo.countBySubclassPresentAndCodedNameLike(false, classCodedNamePrefix);
+					// 
+					
+					if ( usageCount == subClassCount) {
+						// obtain the property
+						Property conceptProperty = fromPropertyDefinition(eClassProperty);
+						
+						// 
+						ClassProperty cp = fromClassificationClassProperty(conceptClass, conceptProperty);
+//						List<ClassificationClassPropertyValue> cpvList = classificationClassPropertyValueRepo.findByPropertyDefinitionAndCodedName(eClassProperty, classCodedNamePrefix);
+//						// 
+//						List<ClassificationClassPropertyValue> ccvList = classificationClassPropertyValueRepo.findByClassificationClassAndProperty(eClass, eClassProperty);
+//						if (! ccvList.isEmpty()) {
+//							List<ClassPropertyValue> valueList = new ArrayList<ClassPropertyValue>();
+//							for (ClassificationClassPropertyValue ccv : ccvList) {
+//								PropertyValue pv = fromPropertyValue(ccv.getValue());
+//								ClassPropertyValue cpv = fromClassificationClassPropertyValue(cp, pv);
+//								valueList.add(cpv);
+//								
+//							}
+//							// reset the value list
+//							cp.setValues(valueList);
+//							classPropertyRepo.save(cp);
+//						}
+						
+						processed.add(eClassProperty.getIrdiPR());
+					}
+					else {
+						// a class is not completely processed - add it to postProcess
+						postProcess.add(conceptClass);
+						// try it one level down 
+					}
+				}				
+			}
+			for ( ConceptClass cClass : postProcess) {
+				copyClassPropertyAssignment(cClass, processed);
+			}
+		}
+		
+		return count;
+	}
+	private boolean copyValueList(ClassProperty classProperty) {
+		// coded name ...
+		// 
+		
+		return false;
 	}
 }

@@ -12,4 +12,5 @@ public interface ClassificationClassRepository extends CrudRepository<Classifica
 	List<ClassificationClass> findByIdentifier(String identifier);
 	List<ClassificationClass> findByCodedNameLike(String codedName);
 	List<ClassificationClass> findByLevelAndCodedNameLike(int level, String codedName);
+	long countBySubclassPresentAndCodedNameLike(boolean subclassPresent, String codedName);
 }
