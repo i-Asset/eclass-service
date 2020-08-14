@@ -1,5 +1,6 @@
 package at.srfg.iot.lookup.web.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,8 +63,8 @@ public class SemanticLookupController implements SemanticLookupService {
 		return conceptBase.deleteConcept(identifier);
 	}
 	@Override
-	public Optional<ConceptClass> addConceptClass(ConceptClass conceptClass) {
-		return conceptService.addConcept(conceptClass);
+	public Optional<ConceptClass> addConceptClass(String parentIdentifier, ConceptClass conceptClass) {
+		return conceptService.addConcept(parentIdentifier, conceptClass);
 	}
 	@Override
 	public Optional<ConceptClass> setConceptClass(ConceptClass conceptClass) {
@@ -79,7 +80,7 @@ public class SemanticLookupController implements SemanticLookupService {
 		return conceptBase.setDescription(identifier, description);
 	}
 	@Override
-	public List<Property> getPropertiesForConceptClass(String identifier, boolean complete) {
+	public Collection<Property> getPropertiesForConceptClass(String identifier, boolean complete) {
 		return conceptService.getProperties(identifier);
 	}
 
@@ -104,9 +105,9 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 	
 	@Override
-	public List<PropertyValue> getValuesForProperty(String identifier, String classIdentifier) {
+	public Collection<PropertyValue> getValuesForProperty(String identifier, String classIdentifier) {
 		// TODO Auto-generated method stub
-		return null;
+		return propertyService.getValues(identifier, classIdentifier);
 	}
 
 	@Override

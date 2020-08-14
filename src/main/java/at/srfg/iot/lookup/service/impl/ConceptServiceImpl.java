@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Strings;
+
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.Description;
 import at.srfg.iot.lookup.repository.ConceptRepository;
@@ -28,6 +30,12 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 			if ( clazz.isInstance(base)) {
 				return Optional.of(clazz.cast(base));
 			}
+		}
+		return Optional.empty();
+	}
+	protected Optional<T> getStoredConcept(T updated) {
+		if (! Strings.isNullOrEmpty(updated.getConceptId())) {
+			return typeRepository.findByConceptId(updated.getConceptId());
 		}
 		return Optional.empty();
 	}

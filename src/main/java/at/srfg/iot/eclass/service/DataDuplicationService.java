@@ -195,7 +195,7 @@ public class DataDuplicationService {
 		PropertyValue target = new PropertyValue(source.getIrdiVA());
 		target.setVersionDate(source.getVersionDate());
 		target.setRevisionNumber(source.getRevisionNumber());
-		target.setDataType(source.getDataType());
+		target.setDataType(DataTypeEnum.fromString(source.getDataType()));
 		target.setReference(source.getReference());
 		target.setShortName(source.getShortName());
 		target.setValue(source.getPreferredName());
