@@ -1,4 +1,4 @@
-package at.srfg.iot.eclass.repository;
+package at.srfg.iot.lookup.repository;
 
 import org.springframework.data.repository.CrudRepository;
 

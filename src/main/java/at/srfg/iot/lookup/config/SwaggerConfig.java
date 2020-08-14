@@ -1,4 +1,4 @@
-package at.srfg.iot.eclass.config;
+package at.srfg.iot.lookup.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

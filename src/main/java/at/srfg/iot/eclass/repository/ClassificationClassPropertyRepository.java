@@ -16,4 +16,6 @@ public interface ClassificationClassPropertyRepository extends CrudRepository<Cl
 	List<ClassificationClassProperty> findByClassificationClassAndProperty(ClassificationClass cc, PropertyDefinition pr);
 	@Query("SELECT DISTINCT(c.property) FROM ClassificationClassProperty c WHERE c.classCodedName LIKE ?1")
 	List<PropertyDefinition> findDistinctPropertyByClassCodedNameLike(String classCodedNamePrefix);
+	@Query("SELECT c.id.irdiPR AS irdiPR, COUNT(c) as usageCount FROM ClassificationClassProperty c WHERE c.classCodedName LIKE ?1 GROUP BY c.id.irdiPR HAVING COUNT(c) = ?2 ")
+	List<Object[]> findPropertyWithUsageCount(String classCodedNamePrefix, long usageCount);
 }
