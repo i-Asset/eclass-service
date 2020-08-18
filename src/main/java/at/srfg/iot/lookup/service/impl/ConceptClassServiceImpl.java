@@ -15,11 +15,15 @@ import at.srfg.iot.classification.model.Property;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.service.ConceptClassService;
+import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
 @Service
 public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> implements ConceptClassService {
 	@Autowired
-	DataDuplicationService duplexer;
+	private SemanticIndexer indexer;
+	
+	@Autowired
+	private DataDuplicationService duplexer;
 	
 	@Autowired
 	ConceptClassPropertyRepository conceptClassPropertyRepository;
@@ -54,6 +58,7 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		toStore.setLevel(newConcept.getLevel());
 		// store the unit
 		ConceptClass stored = typeRepository.save(toStore);
+		indexer.store(toStore);
 		return Optional.of(stored);
 	}
 
@@ -94,6 +99,31 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		}
 		return Optional.empty();
 	}
+	public boolean deleteConcept(String identifier) {
+		Optional<ConceptClass> conceptClass = typeRepository.findByConceptId(identifier);
+		if (conceptClass.isPresent()) {
+			ConceptClass toDelete = conceptClass.get();
+			// delete all children from index & db
+			deleteChildren(toDelete.getChildElements());
+			// delete from database
+			typeRepository.delete(conceptClass.get());
+			// delete from index
+			indexer.remove(conceptClass.get());
+			return true;
+		}
+		return false;
+	}
+	private void deleteChildren(List<ConceptClass> children) {
+		for (ConceptClass child : children) {
+			deleteChildren(child.getChildElements());
+			// delete from index
+			indexer.remove(child);
+			// delete from db
+			typeRepository.delete(child);
+		}
+		
+	}
+
 
 	@Override
 	public List<Property> getProperties(String identifier) {

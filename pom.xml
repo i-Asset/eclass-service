@@ -92,6 +92,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
 		
 		<!-- Security, JWT -->
 		<dependency>
@@ -140,6 +144,11 @@
 		<dependency>
 			<groupId>at.srfg.iot.iasset</groupId>
 			<artifactId>semantic-lookup-data-model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>at.srfg.iot.iasset</groupId>
+			<artifactId>indexing-data-model</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

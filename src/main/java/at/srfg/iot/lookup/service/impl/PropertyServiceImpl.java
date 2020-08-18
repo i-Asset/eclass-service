@@ -17,9 +17,13 @@ import at.srfg.iot.classification.model.PropertyValue;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ClassPropertyValueRepository;
 import at.srfg.iot.lookup.service.PropertyService;
+import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
 @Service
 public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements PropertyService {
+	@Autowired
+	private SemanticIndexer indexer;
+	
 	@Autowired
 	private ClassPropertyValueRepository classPropertyValueRepository;
 	
@@ -62,6 +66,7 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 			checkPropertyValues(toStore, newConcept.getValues());
 		}
 		Property stored = typeRepository.save(toStore);
+		indexer.store(toStore);
 		return Optional.of(stored);
 	}
 	/**
@@ -147,8 +152,11 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 			checkPropertyUnit(property, updated.getUnit());
 			// values
 			checkPropertyValues(property, updated.getValues());
-			//
+			// store in database
 			typeRepository.save(property);
+			// also store in index
+			indexer.store(property);
+			//
 			return Optional.of(property);
 		}
 		return Optional.empty();
@@ -174,6 +182,15 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		}
 		
 		return new HashSet<>();
+	}
+	public boolean deleteConcept(String identifier) {
+		Optional<Property> property = typeRepository.findByConceptId(identifier);
+		if (property.isPresent()) {
+			typeRepository.delete(property.get());
+			indexer.remove(property.get());
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -27,9 +27,13 @@ import at.srfg.iot.eclass.repository.ValueRepository;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.repository.ConceptClassRepository;
 import at.srfg.iot.lookup.repository.ConceptRepository;
+import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
 @Service
 public class DataDuplicationService {
+	@Autowired
+	private SemanticIndexer indexer;
+
 	@Autowired
 	private ClassificationClassRepository classificationClassRepository;
 	@Autowired
@@ -158,7 +162,9 @@ public class DataDuplicationService {
 		duplicatePropertyValues(prop, eClass);
 		//
 		conceptPropertyRepo.save(prop);
-		// 
+		// store property in the index
+		indexer.store(prop);
+
 		return prop;
 	}
 	private void duplicatePropertyValues(Property property, PropertyDefinition eClass) {
@@ -275,6 +281,7 @@ public class DataDuplicationService {
 		// search for property assignements
 		duplicateClassProperties(cClass);
 		//
+		indexer.store(cClass);
 		return cClass;
 		
 	}

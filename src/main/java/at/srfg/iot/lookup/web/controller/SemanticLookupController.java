@@ -72,8 +72,11 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 	
 	@Override
-	public boolean deleteConceptClass(String identifier) {
-		return conceptService.deleteConcept(identifier);
+	public boolean deleteConceptClass(List<String> identifiers) {
+		for (String id : identifiers) {
+			conceptService.deleteConcept(id);
+		}
+		return true;
 	}
 	@Override
 	public Optional<ConceptBase> setConceptDescription(String identifier, Description description) {
@@ -100,8 +103,12 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 
 	@Override
-	public boolean deleteProperty(String identifier) {
-		return propertyService.deleteConcept(identifier);
+	public boolean deleteProperty(List<String> identifiers) {
+		
+		for (String id : identifiers) {
+			propertyService.deleteConcept(id);
+		}
+		return true;
 	}
 	
 	@Override
@@ -126,8 +133,11 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 
 	@Override
-	public boolean deletePropertyUnit(String identifier) {
-		return propertyUnitService.deleteConcept(identifier);
+	public boolean deletePropertyUnit(List<String> identifiers) {
+		for (String id : identifiers ) {
+			propertyUnitService.deleteConcept(id);
+		}
+		return true;
 	}
 
 	@Override
@@ -141,13 +151,16 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 
 	@Override
-	public Optional<PropertyValue> setPropertyValue(PropertyValue PropertyUnit) {
-		return propertyValueService.setConcept(PropertyUnit);
+	public Optional<PropertyValue> setPropertyValue(PropertyValue propertyValue) {
+		return propertyValueService.setConcept(propertyValue);
 	}
 
 	@Override
-	public boolean deletePropertyValue(String identifier) {
-		return propertyValueService.deleteConcept(identifier);
+	public boolean deletePropertyValue(List<String> identifiers) {
+		for (String id : identifiers ) {
+			propertyValueService.deleteConcept(id);
+		}
+		return true;
 	}
 	
 }
