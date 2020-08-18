@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import at.srfg.indexing.model.common.ClassType;
 import at.srfg.indexing.model.common.PropertyType;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
+/**
+ * Redefinition - Feign does not support multiple inheritance
+ * @author dglachs
+ *
+ */
 @FeignClient(name = "indexing-service")
 public interface SemanticIndexing {
 	
@@ -22,10 +24,6 @@ public interface SemanticIndexing {
 	 * @return The stored version of the classType
 	 * @throws Exception
 	 */
-	@ApiOperation(
-			value = "Create or update a ClassType", 
-			notes = "Store the provided ClassType object in the index, will also "
-					+ "create/update Properties including the links between ClassType and PropertyType ...")
 	@RequestMapping(
 			method = RequestMethod.POST,
 			path="/classType")
@@ -42,11 +40,7 @@ public interface SemanticIndexing {
 	@RequestMapping(
 			method = RequestMethod.DELETE,
 			path="/classType")
-	@ApiOperation(
-			value = "Delete a ClassType element from the index", 
-			notes = "The entry is removed, corresponding links from PropertyType are also removed!")
 	public boolean deleteClassType(
-			@ApiParam("The id of the concept class to remove")
 			@RequestParam(name = "id") List<String> uri) throws Exception ;
 	/**
 	 * Store a new or update an existing {@link PropertyType} object
@@ -54,9 +48,6 @@ public interface SemanticIndexing {
 	 * @return The stored version of the PropertyType
 	 * @throws Exception
 	 */
-	@ApiOperation(
-			value = "Create or update a PropertyType", 
-			notes = "Store the provided PropertyType object in the index")
 	@RequestMapping(
 			method = RequestMethod.POST,
 			path="/propertyType")
@@ -73,11 +64,7 @@ public interface SemanticIndexing {
 	@RequestMapping(
 			method = RequestMethod.DELETE,
 			path="/propertyType")
-	@ApiOperation(
-			value = "Delete a PropertyType element from the index", 
-			notes = "The entry is removed, corresponding links from ClassType are NOT removed!")
 	public boolean deletePropertyType(
-			@ApiParam("The id of the property to remove")
 			@RequestParam(name = "id") 
 			List<String> uri) throws Exception;			
 	
