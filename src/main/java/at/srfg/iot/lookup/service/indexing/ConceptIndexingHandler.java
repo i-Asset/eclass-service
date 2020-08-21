@@ -15,8 +15,8 @@ import at.srfg.indexing.model.common.DynamicName;
 import at.srfg.indexing.model.common.PropertyType;
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Description;
-import at.srfg.iot.classification.model.Property;
+import at.srfg.iot.classification.model.ConceptBaseDescription;
+import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 
@@ -52,7 +52,7 @@ public class ConceptIndexingHandler {
 	 */
 	@EventListener @Async
 	public void onPropertyEvent(PropertyEvent event) {
-		Property cc = event.getConcept();
+		ConceptProperty cc = event.getConcept();
 		try {
 			if ( event.isDelete() ) {
 				indexer.deletePropertyType(Collections.singletonList(cc.getConceptId()));
@@ -97,7 +97,7 @@ public class ConceptIndexingHandler {
 	 */
 	private void handleConceptDescription(ConceptBase base, Concept concept) {
 		
-		for (Description d : base.getDescription()) {
+		for (ConceptBaseDescription d : base.getDescription()) {
 			concept.setLabel(d.getLanguage(), d.getPreferredName());
 			if ( d.getDefinition()!= null ) {
 				concept.addDescription(d.getLanguage(), d.getDefinition());
@@ -110,18 +110,18 @@ public class ConceptIndexingHandler {
 	 * @param cType {@link ClassType}
 	 */
 	private void handleConceptProperties(ConceptClass cc, ClassType cType) {
-		Set<Property> properties = getProperties(cc);
-		for (Property property : properties) {
+		Set<ConceptProperty> properties = getProperties(cc);
+		for (ConceptProperty property : properties) {
 			PropertyType pType = asPropertyType(property);
 			cType.addProperty(pType);
 		}
 	}
 	/**
-	 * Helper method for mapping {@link Property} data to the indexed {@link PropertyType}
-	 * @param property the {@link Property} to store in the index
+	 * Helper method for mapping {@link ConceptProperty} data to the indexed {@link PropertyType}
+	 * @param property the {@link ConceptProperty} to store in the index
 	 * @return The {@link PropertyType} finally stored
 	 */
-	private PropertyType asPropertyType(Property property) {
+	private PropertyType asPropertyType(ConceptProperty property) {
 		PropertyType pType = new PropertyType();
 		pType.setUri(property.getConceptId());
 		pType.setNameSpace(property.getNameSpace());
@@ -182,8 +182,8 @@ public class ConceptIndexingHandler {
 	 * @param cc The {@link ConceptClass}
 	 * @return
 	 */
-	private Set<Property> getProperties(ConceptClass cc) {
-		Set<Property> properties = new HashSet<>();
+	private Set<ConceptProperty> getProperties(ConceptClass cc) {
+		Set<ConceptProperty> properties = new HashSet<>();
 		if ( cc.getParentElement() != null) {
 			properties.addAll(getProperties(cc.getParentElement()));
 		}

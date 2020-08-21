@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Property;
+import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.service.ConceptClassService;
@@ -126,7 +126,7 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 
 
 	@Override
-	public List<Property> getProperties(String identifier) {
+	public List<ConceptProperty> getProperties(String identifier) {
 		Optional<ConceptClass> ccOpt = getConcept(identifier);
 		if ( ccOpt.isPresent()) {
 			ConceptClass cc = ccOpt.get();
@@ -139,8 +139,8 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	 * @param conceptClass
 	 * @return
 	 */
-	private List<Property> getProperties(ConceptClass conceptClass) {
-		List<Property> properties = new ArrayList<>();
+	private List<ConceptProperty> getProperties(ConceptClass conceptClass) {
+		List<ConceptProperty> properties = new ArrayList<>();
 		if ( conceptClass.getParentElement() != null) {
 			properties.addAll(getProperties(conceptClass.getParentElement()));
 		}

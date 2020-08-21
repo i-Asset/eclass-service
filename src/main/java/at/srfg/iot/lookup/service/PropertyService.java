@@ -2,10 +2,10 @@ package at.srfg.iot.lookup.service;
 
 import java.util.Set;
 
-import at.srfg.iot.classification.model.Property;
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 
-public interface PropertyService extends ConceptService<Property> {
+public interface PropertyService extends ConceptService<ConceptProperty> {
 	/**
 	 * Retrieve all property-values for a given property and (optionally) for
 	 * a provided class
@@ -13,5 +13,5 @@ public interface PropertyService extends ConceptService<Property> {
 	 * @param classIdentifier
 	 * @return
 	 */
-	Set<PropertyValue> getValues(String identifier, String classIdentifier);
+	Set<ConceptPropertyValue> getValues(String identifier, String classIdentifier);
 }

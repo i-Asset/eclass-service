@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Property;
+import at.srfg.iot.classification.model.ConceptProperty;
 
 public interface ConceptClassService extends ConceptService<ConceptClass> {
 	/**
@@ -12,7 +12,7 @@ public interface ConceptClassService extends ConceptService<ConceptClass> {
 	 * @param identifier
 	 * @return
 	 */
-	List<Property> getProperties(String identifier);
+	List<ConceptProperty> getProperties(String identifier);
 	
 	Optional<ConceptClass> addConcept(String parentConceptIdentifier, ConceptClass newConcept);
 }

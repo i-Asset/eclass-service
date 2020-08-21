@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.ClassProperty;
-import at.srfg.iot.classification.model.ClassPropertyPK;
+import at.srfg.iot.classification.model.ConceptClassProperty;
+import at.srfg.iot.classification.model.ConceptClassPropertyPK;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.DataTypeEnum;
-import at.srfg.iot.classification.model.Property;
-import at.srfg.iot.classification.model.PropertyUnit;
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyUnit;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.eclass.model.ClassificationClass;
 import at.srfg.iot.eclass.model.PropertyDefinition;
 import at.srfg.iot.eclass.repository.ClassificationClassPropertyRepository;
@@ -48,11 +48,11 @@ public class DataDuplicationService {
 	private UnitRepository unitRepo;
 	// 
 	@Autowired
-	private ConceptRepository<Property> conceptPropertyRepo;
+	private ConceptRepository<ConceptProperty> conceptPropertyRepo;
 	@Autowired
-	private ConceptRepository<PropertyUnit> conceptPropertyUnitRepo;
+	private ConceptRepository<ConceptPropertyUnit> conceptPropertyUnitRepo;
 	@Autowired
-	private ConceptRepository<at.srfg.iot.classification.model.PropertyValue> conceptPropertyValueRepo;
+	private ConceptRepository<at.srfg.iot.classification.model.ConceptPropertyValue> conceptPropertyValueRepo;
 	@Autowired 
 	private ConceptClassRepository conceptRepository;
 	
@@ -71,35 +71,35 @@ public class DataDuplicationService {
 		}
 		return Optional.empty();
 	}
-	public Optional<Property> copyProperty(String irdi) {
+	public Optional<ConceptProperty> copyProperty(String irdi) {
 		Optional<PropertyDefinition> ccOpt = propertyRepo.findById(irdi);
 		if (ccOpt.isPresent()) {
 			// obtain the parent for the classification class
 			
 			// now copy the classification class with the parent
-			Property cc = fromPropertyDefinition(ccOpt.get());
+			ConceptProperty cc = fromPropertyDefinition(ccOpt.get());
 			return Optional.of(cc);
 		}
 		return Optional.empty();
 	}
-	public Optional<PropertyUnit> copyUnit(String irdi) {
+	public Optional<ConceptPropertyUnit> copyUnit(String irdi) {
 		Optional<at.srfg.iot.eclass.model.PropertyUnit> ccOpt = unitRepo.findById(irdi);
 		if (ccOpt.isPresent()) {
 			// obtain the parent for the classification class
 			
 			// now copy the classification class with the parent
-			PropertyUnit cc = fromPropertyUnit(ccOpt.get());
+			ConceptPropertyUnit cc = fromPropertyUnit(ccOpt.get());
 			return Optional.of(cc);
 		}
 		return Optional.empty();
 	}
-	public Optional<PropertyValue> copyValue(String irdi) {
+	public Optional<ConceptPropertyValue> copyValue(String irdi) {
 		Optional<at.srfg.iot.eclass.model.PropertyValue> ccOpt = valueRepo.findById(irdi);
 		if (ccOpt.isPresent()) {
 			// obtain the parent for the classification class
 			
 			// now copy the classification class with the parent
-			PropertyValue cc = fromPropertyValue(ccOpt.get());
+			ConceptPropertyValue cc = fromPropertyValue(ccOpt.get());
 			return Optional.of(cc);
 		}
 		return Optional.empty();
@@ -133,8 +133,8 @@ public class DataDuplicationService {
 
 
 
-	private Property duplicateProperty(PropertyDefinition eClass) {
-		Property prop = new Property(eClass.getIrdiPR());
+	private ConceptProperty duplicateProperty(PropertyDefinition eClass) {
+		ConceptProperty prop = new ConceptProperty(eClass.getIrdiPR());
 		prop.setVersionDate(eClass.getVersionDate());
 		prop.setRevisionNumber(eClass.getRevisionNumber());
 		
@@ -150,12 +150,12 @@ public class DataDuplicationService {
 		// process the values
 		for (at.srfg.iot.eclass.model.PropertyValue v : eClass.getValues() ) {
 			// process property assignment
-			PropertyValue vt = fromPropertyValue(v);
+			ConceptPropertyValue vt = fromPropertyValue(v);
 			prop.addPropertyValue(vt);
 			
 		};
 		if ( eClass.getUnit() != null ) {
-			PropertyUnit unit = fromPropertyUnit(eClass.getUnit());
+			ConceptPropertyUnit unit = fromPropertyUnit(eClass.getUnit());
 			prop.setUnit(unit);
 		}
 		// 
@@ -167,7 +167,7 @@ public class DataDuplicationService {
 
 		return prop;
 	}
-	private void duplicatePropertyValues(Property property, PropertyDefinition eClass) {
+	private void duplicatePropertyValues(ConceptProperty property, PropertyDefinition eClass) {
 		List<Object[]> values = classificationClassPropertyValueRepo.findValuesForProperty(eClass.getIrdiPR(), "FALSE");
 		for (Object[] value : values) {
 			String irdiVA = value[0].toString();
@@ -175,13 +175,13 @@ public class DataDuplicationService {
 			long max = new Long(value[2].toString()).longValue();
 			if ( min == max) {
 				at.srfg.iot.eclass.model.PropertyValue v = valueRepo.findByIrdiVA(irdiVA);
-				PropertyValue pv = fromPropertyValue(v);
+				ConceptPropertyValue pv = fromPropertyValue(v);
 				property.addPropertyValue(pv);
 			}
 		}
 	}
-	private PropertyUnit duplicatePropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
-		PropertyUnit target = new PropertyUnit(eClass.getIrdiUN());
+	private ConceptPropertyUnit duplicatePropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
+		ConceptPropertyUnit target = new ConceptPropertyUnit(eClass.getIrdiUN());
 		//target.setVersionDate(eClass.getVersionDate());
 		//target.setRevisionNumber(eClass.get);
 		target.setDescription("en", eClass.getShortName(), eClass.getDefinition());
@@ -197,8 +197,8 @@ public class DataDuplicationService {
 		conceptPropertyUnitRepo.save(target);
 		return target;
 	}
-	private PropertyValue duplicatePropertyValue(at.srfg.iot.eclass.model.PropertyValue source) {
-		PropertyValue target = new PropertyValue(source.getIrdiVA());
+	private ConceptPropertyValue duplicatePropertyValue(at.srfg.iot.eclass.model.PropertyValue source) {
+		ConceptPropertyValue target = new ConceptPropertyValue(source.getIrdiVA());
 		target.setVersionDate(source.getVersionDate());
 		target.setRevisionNumber(source.getRevisionNumber());
 		target.setDataType(DataTypeEnum.fromString(source.getDataType()));
@@ -218,44 +218,44 @@ public class DataDuplicationService {
 			}
 		});
 	}
-	private PropertyUnit fromPropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
-		Optional<PropertyUnit> opt = conceptPropertyUnitRepo.findByConceptId(eClass.getIrdiUN());
-		return opt.orElseGet(new Supplier<PropertyUnit>() {
-			public PropertyUnit get() {
+	private ConceptPropertyUnit fromPropertyUnit(at.srfg.iot.eclass.model.PropertyUnit eClass) {
+		Optional<ConceptPropertyUnit> opt = conceptPropertyUnitRepo.findByConceptId(eClass.getIrdiUN());
+		return opt.orElseGet(new Supplier<ConceptPropertyUnit>() {
+			public ConceptPropertyUnit get() {
 				return duplicatePropertyUnit(eClass);
 			}
 		});
 	}
 
-	private PropertyValue fromPropertyValue(at.srfg.iot.eclass.model.PropertyValue eClass) {
-		Optional<PropertyValue> opt = conceptPropertyValueRepo.findByConceptId(eClass.getIrdiVA());
-		return opt.orElseGet(new Supplier<PropertyValue>() {
-			public PropertyValue get() {
+	private ConceptPropertyValue fromPropertyValue(at.srfg.iot.eclass.model.PropertyValue eClass) {
+		Optional<ConceptPropertyValue> opt = conceptPropertyValueRepo.findByConceptId(eClass.getIrdiVA());
+		return opt.orElseGet(new Supplier<ConceptPropertyValue>() {
+			public ConceptPropertyValue get() {
 				return duplicatePropertyValue(eClass);
 			}
 		});
 	}
 
-	private Property fromPropertyDefinition(PropertyDefinition eClass) {
-		Optional<Property> opt = conceptPropertyRepo.findByConceptId(eClass.getIrdiPR());
-		return opt.orElseGet(new Supplier<Property>() {
-			public Property get() {
+	private ConceptProperty fromPropertyDefinition(PropertyDefinition eClass) {
+		Optional<ConceptProperty> opt = conceptPropertyRepo.findByConceptId(eClass.getIrdiPR());
+		return opt.orElseGet(new Supplier<ConceptProperty>() {
+			public ConceptProperty get() {
 				return duplicateProperty(eClass);
 			}
 		});
 	}
-	private ClassProperty fromClassificationClassProperty(final ConceptClass cClass, final Property property, long usageCount) {
-		Optional<ClassProperty> opt = classPropertyRepo.findById(new ClassPropertyPK(cClass, property));
+	private ConceptClassProperty fromClassificationClassProperty(final ConceptClass cClass, final ConceptProperty property, long usageCount) {
+		Optional<ConceptClassProperty> opt = classPropertyRepo.findById(new ConceptClassPropertyPK(cClass, property));
 		
-		return opt.orElseGet(new Supplier<ClassProperty>() {
-			public ClassProperty get() {
-				ClassProperty classProperty = new ClassProperty(cClass, property);
+		return opt.orElseGet(new Supplier<ConceptClassProperty>() {
+			public ConceptClassProperty get() {
+				ConceptClassProperty classProperty = new ConceptClassProperty(cClass, property);
 				
 				List<Object[]> values = classificationClassPropertyValueRepo.findValuesForPropertyAndCodedName(property.getConceptId(), cClass.getCodedName(), "TRUE", usageCount);
 				for (Object[] pwc : values) {
 					String irdiVA = pwc[0].toString();
 					at.srfg.iot.eclass.model.PropertyValue value = valueRepo.findByIrdiVA(irdiVA);
-					PropertyValue conceptValue = fromPropertyValue(value);
+					ConceptPropertyValue conceptValue = fromPropertyValue(value);
 					classProperty.addPropertyValue(conceptValue);
 					classProperty.setValueConstraint(true);
 				}
@@ -295,7 +295,7 @@ public class DataDuplicationService {
 		for (Object[] pwc : propertiesWithCount) {
 			String irdiPR = pwc[0].toString();
 			PropertyDefinition eClassProperty = propertyRepo.findByIrdiPR(irdiPR);
-			Property conceptProperty = fromPropertyDefinition(eClassProperty);
+			ConceptProperty conceptProperty = fromPropertyDefinition(eClassProperty);
 			// 
 			fromClassificationClassProperty(conceptClass, conceptProperty, subClassCount);
 			

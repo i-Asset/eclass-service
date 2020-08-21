@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 
 import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.Description;
+import at.srfg.iot.classification.model.ConceptBaseDescription;
 import at.srfg.iot.lookup.repository.ConceptRepository;
 import at.srfg.iot.lookup.service.ConceptService;
 /**
@@ -54,7 +54,7 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 		return false;
 	}
 	@Override
-	public Optional<T> setDescription(String identifier, Description desc) {
+	public Optional<T> setDescription(String identifier, ConceptBaseDescription desc) {
 		Optional<T> baseOpt = getConcept(identifier);
 		if ( baseOpt.isPresent()) {
 			T base = baseOpt.get();

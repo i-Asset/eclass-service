@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Property;
-import at.srfg.iot.classification.model.PropertyUnit;
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyUnit;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ClassPropertyValueRepository;
 import at.srfg.iot.lookup.service.PropertyService;
 import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
 @Service
-public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements PropertyService {
+public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> implements PropertyService {
 	@Autowired
 	private SemanticIndexer indexer;
 	
@@ -36,8 +36,8 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 	@Autowired
 	DataDuplicationService duplexer;
 	
-	public Optional<Property> getConcept(String identifier) {
-		Optional<Property> ccOpt = typeRepository.findByConceptId(identifier);
+	public Optional<ConceptProperty> getConcept(String identifier) {
+		Optional<ConceptProperty> ccOpt = typeRepository.findByConceptId(identifier);
 		if (!ccOpt.isPresent()) {
 			return duplexer.copyProperty(identifier);
 			
@@ -48,8 +48,8 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 	}
 
 	@Override
-	public Optional<Property> addConcept(Property newConcept) {
-		Property toStore = new Property(newConcept.getConceptId());
+	public Optional<ConceptProperty> addConcept(ConceptProperty newConcept) {
+		ConceptProperty toStore = new ConceptProperty(newConcept.getConceptId());
 		toStore.setCategory(newConcept.getCategory());
 		toStore.setCoded(newConcept.isCoded());
 		toStore.setDataType(newConcept.getDataType());
@@ -65,19 +65,19 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		if ( newConcept.getValues() != null ) {
 			checkPropertyValues(toStore, newConcept.getValues());
 		}
-		Property stored = typeRepository.save(toStore);
+		ConceptProperty stored = typeRepository.save(toStore);
 		indexer.store(toStore);
 		return Optional.of(stored);
 	}
 	/**
-	 * Helper method for assigning a {@link PropertyUnit} - will be created when not present
+	 * Helper method for assigning a {@link ConceptPropertyUnit} - will be created when not present
 	 * @param property
 	 * @param unit
 	 */
-	private void checkPropertyUnit(Property property, PropertyUnit unit) {
+	private void checkPropertyUnit(ConceptProperty property, ConceptPropertyUnit unit) {
 		if (unit != null && ! Strings.isNullOrEmpty(unit.getConceptId())) {
 			// check the provided unit (the identifier is important to find the stuff)
-			Optional<PropertyUnit> stored = propertyUnitService.getConcept(unit.getConceptId());
+			Optional<ConceptPropertyUnit> stored = propertyUnitService.getConcept(unit.getConceptId());
 			if ( stored.isPresent()) {
 				property.setUnit(stored.get());
 			}
@@ -90,15 +90,15 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		}
 	}
 	/**
-	 * Helper method for assigning a {@link PropertyValue} - will be created when not preset
+	 * Helper method for assigning a {@link ConceptPropertyValue} - will be created when not preset
 	 * @param property
 	 * @param value
 	 * @return
 	 */
-	private Optional<PropertyValue> checkPropertyValue(Property property, PropertyValue value) {
+	private Optional<ConceptPropertyValue> checkPropertyValue(ConceptProperty property, ConceptPropertyValue value) {
 		if (value != null && ! Strings.isNullOrEmpty(value.getConceptId())) {
 			// check the provided unit (the identifier is important to find the stuff)
-			Optional<PropertyValue> stored = propertyValueService.getConcept(value.getConceptId());
+			Optional<ConceptPropertyValue> stored = propertyValueService.getConcept(value.getConceptId());
 			if ( stored.isPresent()) {
 				return stored;
 			}
@@ -109,15 +109,15 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		return Optional.empty();
 	}
 	/**
-	 * Helper for processing the list of provided {@link PropertyValue} elements
+	 * Helper for processing the list of provided {@link ConceptPropertyValue} elements
  	 * @param property
 	 * @param values
 	 */
-	private void checkPropertyValues(Property property, Set<PropertyValue> values) {
-		Set<PropertyValue> propValues = new HashSet<>();
+	private void checkPropertyValues(ConceptProperty property, Set<ConceptPropertyValue> values) {
+		Set<ConceptPropertyValue> propValues = new HashSet<>();
 		if ( values != null && ! values.isEmpty()) {
-			for (PropertyValue value : values ) {
-				Optional<PropertyValue> stored = checkPropertyValue(property, value);
+			for (ConceptPropertyValue value : values ) {
+				Optional<ConceptPropertyValue> stored = checkPropertyValue(property, value);
 				if ( stored.isPresent()) {
 					propValues.add(stored.get());
 				}
@@ -126,10 +126,10 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		}
 	}
 	@Override
-	public Optional<Property> setConcept(Property updated) {
-		Optional<Property> stored = getStoredConcept(updated);
+	public Optional<ConceptProperty> setConcept(ConceptProperty updated) {
+		Optional<ConceptProperty> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			Property property = stored.get();
+			ConceptProperty property = stored.get();
 			// description
 			property.setDescription(updated.getDescription());
 			// note
@@ -163,16 +163,16 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 	}
 
 	@Override
-	public Set<PropertyValue> getValues(String identifier, String classIdentifier) {
-		Optional<Property> property = getConcept(identifier);
+	public Set<ConceptPropertyValue> getValues(String identifier, String classIdentifier) {
+		Optional<ConceptProperty> property = getConcept(identifier);
 		if (property.isPresent()) {
 			if (! Strings.isNullOrEmpty(classIdentifier)) {
 				Optional<ConceptClass> cClass = getConcept(classIdentifier, ConceptClass.class);
 				if ( cClass.isPresent() ) {
-					List<PropertyValue> cClassPropertyValues 
+					List<ConceptPropertyValue> cClassPropertyValues 
 						= classPropertyValueRepository.findByConceptClassAndProperty(cClass.get(), property.get());
 					if (! cClassPropertyValues.isEmpty()) {
-						Set<PropertyValue> values = new HashSet<>();
+						Set<ConceptPropertyValue> values = new HashSet<>();
 						values.addAll(cClassPropertyValues);
 						return values;
 					}
@@ -184,7 +184,7 @@ public class PropertyServiceImpl extends ConceptServiceImpl<Property> implements
 		return new HashSet<>();
 	}
 	public boolean deleteConcept(String identifier) {
-		Optional<Property> property = typeRepository.findByConceptId(identifier);
+		Optional<ConceptProperty> property = typeRepository.findByConceptId(identifier);
 		if (property.isPresent()) {
 			typeRepository.delete(property.get());
 			indexer.remove(property.get());

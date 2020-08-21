@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Property;
-import at.srfg.iot.classification.model.PropertyUnit;
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyUnit;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.lookup.service.ConceptService;
 
 @Service
@@ -30,13 +30,13 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 			Optional<ConceptClass> storedClass = conceptClass.addConcept(ConceptClass.class.cast(concept));
 			return Optional.ofNullable(storedClass.orElse(null));
 		case ConceptBase.PROPERTY:
-			Optional<Property> storedProperty = property.addConcept(Property.class.cast(concept));
+			Optional<ConceptProperty> storedProperty = property.addConcept(ConceptProperty.class.cast(concept));
 			return Optional.ofNullable(storedProperty.orElse(null));
 		case ConceptBase.PROPERTY_UNIT:
-			Optional<PropertyUnit> storedUnit = propertyUnit.addConcept(PropertyUnit.class.cast(concept));
+			Optional<ConceptPropertyUnit> storedUnit = propertyUnit.addConcept(ConceptPropertyUnit.class.cast(concept));
 			return Optional.ofNullable(storedUnit.orElse(null));
 		case ConceptBase.PROPERTY_VALUE:
-			Optional<PropertyValue> storedValue = propertyValue.addConcept(PropertyValue.class.cast(concept));
+			Optional<ConceptPropertyValue> storedValue = propertyValue.addConcept(ConceptPropertyValue.class.cast(concept));
 			return Optional.ofNullable(storedValue.orElse(null));
 		default:
 			return Optional.empty();
@@ -50,13 +50,13 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 			Optional<ConceptClass> storedClass = conceptClass.setConcept(ConceptClass.class.cast(concept));
 			return Optional.ofNullable(storedClass.orElse(null));
 		case ConceptBase.PROPERTY:
-			Optional<Property> storedProperty = property.setConcept(Property.class.cast(concept));
+			Optional<ConceptProperty> storedProperty = property.setConcept(ConceptProperty.class.cast(concept));
 			return Optional.ofNullable(storedProperty.orElse(null));
 		case ConceptBase.PROPERTY_UNIT:
-			Optional<PropertyUnit> storedUnit = propertyUnit.setConcept(PropertyUnit.class.cast(concept));
+			Optional<ConceptPropertyUnit> storedUnit = propertyUnit.setConcept(ConceptPropertyUnit.class.cast(concept));
 			return Optional.ofNullable(storedUnit.orElse(null));
 		case ConceptBase.PROPERTY_VALUE:
-			Optional<PropertyValue> storedValue = propertyValue.setConcept(PropertyValue.class.cast(concept));
+			Optional<ConceptPropertyValue> storedValue = propertyValue.setConcept(ConceptPropertyValue.class.cast(concept));
 			return Optional.ofNullable(storedValue.orElse(null));
 		default:
 			return Optional.empty();

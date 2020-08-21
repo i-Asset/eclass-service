@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.lookup.service.PropertyValueService;
 
 @Service
-public class PropertyValueServiceImpl extends ConceptServiceImpl<PropertyValue> implements PropertyValueService {
+public class PropertyValueServiceImpl extends ConceptServiceImpl<ConceptPropertyValue> implements PropertyValueService {
 
 	@Override
-	public Optional<PropertyValue> addConcept(PropertyValue newConcept) {
-		PropertyValue toStore = new PropertyValue(newConcept.getConceptId());
+	public Optional<ConceptPropertyValue> addConcept(ConceptPropertyValue newConcept) {
+		ConceptPropertyValue toStore = new ConceptPropertyValue(newConcept.getConceptId());
 		toStore.setShortName(newConcept.getShortName());
 		toStore.setDescription(newConcept.getDescription());
 		toStore.setNote(newConcept.getNote());
@@ -26,15 +26,15 @@ public class PropertyValueServiceImpl extends ConceptServiceImpl<PropertyValue> 
 		toStore.setReference(newConcept.getReference());
 		toStore.setValue(newConcept.getValue());
 		// store the unit
-		PropertyValue stored = typeRepository.save(toStore);
+		ConceptPropertyValue stored = typeRepository.save(toStore);
 		return Optional.of(stored);
 	}
 
 	@Override
-	public Optional<PropertyValue> setConcept(PropertyValue updated) {
-		Optional<PropertyValue> stored = getStoredConcept(updated);
+	public Optional<ConceptPropertyValue> setConcept(ConceptPropertyValue updated) {
+		Optional<ConceptPropertyValue> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			PropertyValue property = stored.get();
+			ConceptPropertyValue property = stored.get();
 			// description
 			property.setDescription(updated.getDescription());
 			property.setDescription(updated.getDescription());

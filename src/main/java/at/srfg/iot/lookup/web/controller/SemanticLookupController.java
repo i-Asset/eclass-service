@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import at.srfg.iot.classification.api.SemanticLookupService;
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Description;
-import at.srfg.iot.classification.model.Property;
-import at.srfg.iot.classification.model.PropertyUnit;
-import at.srfg.iot.classification.model.PropertyValue;
+import at.srfg.iot.classification.model.ConceptBaseDescription;
+import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyUnit;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.lookup.service.ConceptClassService;
 import at.srfg.iot.lookup.service.ConceptService;
 import at.srfg.iot.lookup.service.PropertyService;
@@ -79,26 +79,26 @@ public class SemanticLookupController implements SemanticLookupService {
 		return true;
 	}
 	@Override
-	public Optional<ConceptBase> setConceptDescription(String identifier, Description description) {
+	public Optional<ConceptBase> setConceptDescription(String identifier, ConceptBaseDescription description) {
 		return conceptBase.setDescription(identifier, description);
 	}
 	@Override
-	public Collection<Property> getPropertiesForConceptClass(String identifier, boolean complete) {
+	public Collection<ConceptProperty> getPropertiesForConceptClass(String identifier, boolean complete) {
 		return conceptService.getProperties(identifier);
 	}
 
 	@Override
-	public Optional<Property> getProperty(String identifier) {
+	public Optional<ConceptProperty> getProperty(String identifier) {
 		return propertyService.getConcept(identifier);
 	}
 
 	@Override
-	public Optional<Property> addProperty(Property property) {
+	public Optional<ConceptProperty> addProperty(ConceptProperty property) {
 		return propertyService.addConcept(property);
 	}
 
 	@Override
-	public Optional<Property> setProperty(Property property) {
+	public Optional<ConceptProperty> setProperty(ConceptProperty property) {
 		return propertyService.setConcept(property);
 	}
 
@@ -112,23 +112,23 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 	
 	@Override
-	public Collection<PropertyValue> getValuesForProperty(String identifier, String classIdentifier) {
+	public Collection<ConceptPropertyValue> getValuesForProperty(String identifier, String classIdentifier) {
 		// TODO Auto-generated method stub
 		return propertyService.getValues(identifier, classIdentifier);
 	}
 
 	@Override
-	public Optional<PropertyUnit> getPropertyUnit(String identifier) {
+	public Optional<ConceptPropertyUnit> getPropertyUnit(String identifier) {
 		return propertyUnitService.getConcept(identifier);
 	}
 
 	@Override
-	public Optional<PropertyUnit> addPropertyUnit(PropertyUnit propertyUnit) {
+	public Optional<ConceptPropertyUnit> addPropertyUnit(ConceptPropertyUnit propertyUnit) {
 		return propertyUnitService.addConcept(propertyUnit);
 	}
 
 	@Override
-	public Optional<PropertyUnit> setPropertyUnit(PropertyUnit PropertyUnit) {
+	public Optional<ConceptPropertyUnit> setPropertyUnit(ConceptPropertyUnit PropertyUnit) {
 		return propertyUnitService.setConcept(PropertyUnit);
 	}
 
@@ -141,17 +141,17 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 
 	@Override
-	public Optional<PropertyValue> getPropertyValue(String identifier) {
+	public Optional<ConceptPropertyValue> getPropertyValue(String identifier) {
 		return propertyValueService.getConcept(identifier);
 	}
 
 	@Override
-	public Optional<PropertyValue> addPropertyValue(PropertyValue propertyUnit) {
+	public Optional<ConceptPropertyValue> addPropertyValue(ConceptPropertyValue propertyUnit) {
 		return propertyValueService.addConcept(propertyUnit);
 	}
 
 	@Override
-	public Optional<PropertyValue> setPropertyValue(PropertyValue propertyValue) {
+	public Optional<ConceptPropertyValue> setPropertyValue(ConceptPropertyValue propertyValue) {
 		return propertyValueService.setConcept(propertyValue);
 	}
 

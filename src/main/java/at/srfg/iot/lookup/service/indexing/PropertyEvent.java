@@ -1,13 +1,13 @@
 package at.srfg.iot.lookup.service.indexing;
 
-import at.srfg.iot.classification.model.Property;
+import at.srfg.iot.classification.model.ConceptProperty;
 
-public class PropertyEvent extends IndexingEvent<Property> {
+public class PropertyEvent extends IndexingEvent<ConceptProperty> {
 
-	public PropertyEvent(Property source) {
+	public PropertyEvent(ConceptProperty source) {
 		super(source);
 	}
-	public PropertyEvent(Property source, boolean delete) {
+	public PropertyEvent(ConceptProperty source, boolean delete) {
 		super(source, delete);
 	}
 

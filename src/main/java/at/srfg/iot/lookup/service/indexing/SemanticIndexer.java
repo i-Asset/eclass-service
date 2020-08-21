@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.Property;
+import at.srfg.iot.classification.model.ConceptProperty;
 /**
  * Component triggering the indexation of modified data
  * with the indexing service.
@@ -25,10 +25,10 @@ public class SemanticIndexer {
 		publisher.publishEvent(new ConceptClassEvent(conceptClass));
 	}
 	/**
-	 * Asynchronously (re)index the {@link Property}
+	 * Asynchronously (re)index the {@link ConceptProperty}
 	 * @param property
 	 */
-	public void store(Property property) {
+	public void store(ConceptProperty property) {
 		publisher.publishEvent(new PropertyEvent(property));
 	}
 	
@@ -40,10 +40,10 @@ public class SemanticIndexer {
 		publisher.publishEvent(new ConceptClassEvent(conceptClass, true));
 	}
 	/**
-	 * Asynchronously (re)index the {@link Property}
+	 * Asynchronously (re)index the {@link ConceptProperty}
 	 * @param property
 	 */
-	public void remove(Property property) {
+	public void remove(ConceptProperty property) {
 		publisher.publishEvent(new PropertyEvent(property, true));
 	}
 	
