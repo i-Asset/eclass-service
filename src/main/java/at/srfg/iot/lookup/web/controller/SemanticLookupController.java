@@ -86,6 +86,17 @@ public class SemanticLookupController implements SemanticLookupService {
 	public Collection<ConceptProperty> getPropertiesForConceptClass(String identifier, boolean complete) {
 		return conceptService.getProperties(identifier);
 	}
+	@Override
+	public Collection<ConceptProperty> setPropertiesForConceptClass(String identifier, List<String> propIds, List<ConceptProperty> properties) {
+		if ( propIds !=null && !propIds.isEmpty()) {
+			return conceptService.setPropertiesById(identifier, propIds);
+		} if ( properties != null && !properties.isEmpty()) {
+			return conceptService.setProperties(identifier, properties);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
+		}
+	}
 
 	@Override
 	public Optional<ConceptProperty> getProperty(String identifier) {
