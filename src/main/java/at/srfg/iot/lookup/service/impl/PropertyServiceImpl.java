@@ -125,39 +125,45 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 			property.setValues(propValues);
 		}
 	}
+	
+	@Override
+	public Optional<ConceptProperty> setConcept(ConceptProperty property, ConceptProperty updated) {
+		// description
+		property.setDescription(updated.getDescription());
+		// note
+		if (! Strings.isNullOrEmpty(updated.getNote())) {
+			property.setNote(updated.getNote());
+		}
+		// remark
+		if (! Strings.isNullOrEmpty(updated.getRemark())) {
+			property.setRemark(updated.getRemark());
+		}
+		// shortName
+		if (! Strings.isNullOrEmpty(updated.getShortName())) {
+			property.setShortName(updated.getShortName());
+		}
+		// category
+		if (! Strings.isNullOrEmpty(updated.getCategory())) {
+			property.setCategory(updated.getCategory());
+		}
+		// unit
+		checkPropertyUnit(property, updated.getUnit());
+		// values
+		checkPropertyValues(property, updated.getValues());
+		// store in database
+		typeRepository.save(property);
+		// also store in index
+		indexer.store(property);
+		//
+		return Optional.of(property);
+		// TODO Auto-generated method stub
+	}
+
 	@Override
 	public Optional<ConceptProperty> setConcept(ConceptProperty updated) {
 		Optional<ConceptProperty> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			ConceptProperty property = stored.get();
-			// description
-			property.setDescription(updated.getDescription());
-			// note
-			if (! Strings.isNullOrEmpty(updated.getNote())) {
-				property.setNote(updated.getNote());
-			}
-			// remark
-			if (! Strings.isNullOrEmpty(updated.getRemark())) {
-				property.setRemark(updated.getRemark());
-			}
-			// shortName
-			if (! Strings.isNullOrEmpty(updated.getShortName())) {
-				property.setShortName(updated.getShortName());
-			}
-			// category
-			if (! Strings.isNullOrEmpty(updated.getCategory())) {
-				property.setCategory(updated.getCategory());
-			}
-			// unit
-			checkPropertyUnit(property, updated.getUnit());
-			// values
-			checkPropertyValues(property, updated.getValues());
-			// store in database
-			typeRepository.save(property);
-			// also store in index
-			indexer.store(property);
-			//
-			return Optional.of(property);
+			return setConcept(stored.get(), updated);
 		}
 		return Optional.empty();
 	}

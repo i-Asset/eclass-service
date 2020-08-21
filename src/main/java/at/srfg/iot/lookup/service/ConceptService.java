@@ -37,6 +37,7 @@ public interface ConceptService<T extends ConceptBase> {
 	 * @return
 	 */
 	Optional<T> setConcept(T updatedConcept);
+	Optional<T> setConcept(T storedConcept, T updatedConcept);
 	/**
 	 * Delete a concept from the repository
 	 * @param identifier

@@ -72,34 +72,38 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	}
 
 	@Override
+	public Optional<ConceptClass> setConcept(ConceptClass property, ConceptClass updated) {
+		// description
+		property.setDescription(updated.getDescription());
+		property.setDescription(updated.getDescription());
+		// note
+		if (! Strings.isNullOrEmpty(updated.getNote())) {
+			property.setNote(updated.getNote());
+		}
+		// remark
+		if (! Strings.isNullOrEmpty(updated.getRemark())) {
+			property.setRemark(updated.getRemark());
+		}
+		// shortName
+		if (! Strings.isNullOrEmpty(updated.getShortName())) {
+			property.setShortName(updated.getShortName());
+		}
+		// reference
+		if (! Strings.isNullOrEmpty(updated.getCodedName())) {
+			property.setCodedName(updated.getCodedName());
+		}
+		// TODO: deal with parent element
+		
+		//
+		typeRepository.save(property);
+		return Optional.of(property);
+	}
+
+	@Override
 	public Optional<ConceptClass> setConcept(ConceptClass updated) {
 		Optional<ConceptClass> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			ConceptClass property = stored.get();
-			// description
-			property.setDescription(updated.getDescription());
-			property.setDescription(updated.getDescription());
-			// note
-			if (! Strings.isNullOrEmpty(updated.getNote())) {
-				property.setNote(updated.getNote());
-			}
-			// remark
-			if (! Strings.isNullOrEmpty(updated.getRemark())) {
-				property.setRemark(updated.getRemark());
-			}
-			// shortName
-			if (! Strings.isNullOrEmpty(updated.getShortName())) {
-				property.setShortName(updated.getShortName());
-			}
-			// reference
-			if (! Strings.isNullOrEmpty(updated.getCodedName())) {
-				property.setCodedName(updated.getCodedName());
-			}
-			// TODO: deal with parent element
-			
-			//
-			typeRepository.save(property);
-			return Optional.of(property);
+			return setConcept(stored.get(), updated);
 		}
 		return Optional.empty();
 	}
@@ -203,7 +207,8 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 						}
 					}
 					else {
-						Optional<ConceptProperty> stored = propertyService.setConcept(property);
+						// 
+						Optional<ConceptProperty> stored = propertyService.setConcept(pe.get(),property);
 						if ( stored.isPresent()) {
 							existing.add(stored.get());
 							ConceptClassProperty ccp = new ConceptClassProperty(cc, stored.get());

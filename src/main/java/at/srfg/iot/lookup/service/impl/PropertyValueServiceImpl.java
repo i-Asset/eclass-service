@@ -31,40 +31,44 @@ public class PropertyValueServiceImpl extends ConceptServiceImpl<ConceptProperty
 	}
 
 	@Override
+	public Optional<ConceptPropertyValue> setConcept(ConceptPropertyValue property,
+			ConceptPropertyValue updated) {
+		property.setDescription(updated.getDescription());
+		property.setDescription(updated.getDescription());
+		// note
+		if (! Strings.isNullOrEmpty(updated.getNote())) {
+			property.setNote(updated.getNote());
+		}
+		// remark
+		if (! Strings.isNullOrEmpty(updated.getRemark())) {
+			property.setRemark(updated.getRemark());
+		}
+		// shortName
+		if (! Strings.isNullOrEmpty(updated.getShortName())) {
+			property.setShortName(updated.getShortName());
+		}
+		// reference
+		if (! Strings.isNullOrEmpty(updated.getReference())) {
+			property.setReference(updated.getReference());
+		}
+		// definition
+		if (! Strings.isNullOrEmpty(updated.getDefinition())) {
+			property.setDefinition(updated.getDefinition());
+		}
+		// value
+		if (! Strings.isNullOrEmpty(updated.getValue())) {
+			property.setValue(updated.getValue());
+		}
+		//
+		typeRepository.save(property);
+		return Optional.of(property);
+	}
+
+	@Override
 	public Optional<ConceptPropertyValue> setConcept(ConceptPropertyValue updated) {
 		Optional<ConceptPropertyValue> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			ConceptPropertyValue property = stored.get();
-			// description
-			property.setDescription(updated.getDescription());
-			property.setDescription(updated.getDescription());
-			// note
-			if (! Strings.isNullOrEmpty(updated.getNote())) {
-				property.setNote(updated.getNote());
-			}
-			// remark
-			if (! Strings.isNullOrEmpty(updated.getRemark())) {
-				property.setRemark(updated.getRemark());
-			}
-			// shortName
-			if (! Strings.isNullOrEmpty(updated.getShortName())) {
-				property.setShortName(updated.getShortName());
-			}
-			// reference
-			if (! Strings.isNullOrEmpty(updated.getReference())) {
-				property.setReference(updated.getReference());
-			}
-			// definition
-			if (! Strings.isNullOrEmpty(updated.getDefinition())) {
-				property.setDefinition(updated.getDefinition());
-			}
-			// value
-			if (! Strings.isNullOrEmpty(updated.getValue())) {
-				property.setValue(updated.getValue());
-			}
-			//
-			typeRepository.save(property);
-			return Optional.of(property);
+			return setConcept(stored.get(),updated);
 		}
 		return Optional.empty();
 	}
