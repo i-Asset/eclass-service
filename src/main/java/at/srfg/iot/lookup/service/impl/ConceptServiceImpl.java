@@ -24,15 +24,23 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 	@Autowired
 	protected ConceptRepository<T> typeRepository;
 	public <O extends ConceptBase> Optional<O> getConcept(String identifier, Class<O> clazz) {
-		Optional<ConceptBase> concept = baseRepository.findByConceptId(identifier);
-		if ( concept.isPresent() ) {
-			ConceptBase base = concept.get();
-			if ( clazz.isInstance(base)) {
-				return Optional.of(clazz.cast(base));
+		if (! Strings.isNullOrEmpty(identifier)) {
+			Optional<ConceptBase> concept = baseRepository.findByConceptId(identifier);
+			if ( concept.isPresent() ) {
+				ConceptBase base = concept.get();
+				if ( clazz.isInstance(base)) {
+					return Optional.of(clazz.cast(base));
+				}
 			}
 		}
 		return Optional.empty();
 	}
+	/**
+	 * Read the stored concept based on it's {@link ConceptBase#getConceptId()} prior
+	 * to updating.
+	 * @param updated The concept for updating, must provide the {@link ConceptBase#getConceptId()}
+	 * @return
+	 */
 	protected Optional<T> getStoredConcept(T updated) {
 		if (! Strings.isNullOrEmpty(updated.getConceptId())) {
 			return typeRepository.findByConceptId(updated.getConceptId());

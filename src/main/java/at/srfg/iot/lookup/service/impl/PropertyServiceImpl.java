@@ -1,9 +1,12 @@
 package at.srfg.iot.lookup.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +14,13 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 
 import at.srfg.iot.classification.model.ConceptClass;
+import at.srfg.iot.classification.model.ConceptClassProperty;
 import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.classification.model.ConceptPropertyUnit;
 import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ClassPropertyValueRepository;
+import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.service.PropertyService;
 import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
@@ -26,7 +31,10 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 	
 	@Autowired
 	private ClassPropertyValueRepository classPropertyValueRepository;
-	
+
+	@Autowired
+	private ConceptClassPropertyRepository classPropertyRepository;
+
 	@Autowired
 	private PropertyUnitServiceImpl propertyUnitService;
 
@@ -127,7 +135,7 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 	}
 	
 	@Override
-	public Optional<ConceptProperty> setConcept(ConceptProperty property, ConceptProperty updated) {
+	public ConceptProperty setConcept(ConceptProperty property, ConceptProperty updated) {
 		// description
 		property.setDescription(updated.getDescription());
 		// note
@@ -151,43 +159,118 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 		// values
 		checkPropertyValues(property, updated.getValues());
 		// store in database
-		typeRepository.save(property);
 		// also store in index
 		indexer.store(property);
 		//
-		return Optional.of(property);
-		// TODO Auto-generated method stub
+		return typeRepository.save(property);
 	}
 
 	@Override
 	public Optional<ConceptProperty> setConcept(ConceptProperty updated) {
 		Optional<ConceptProperty> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			return setConcept(stored.get(), updated);
+			return Optional.of(setConcept(stored.get(), updated));
 		}
 		return Optional.empty();
 	}
 
 	@Override
-	public Set<ConceptPropertyValue> getValues(String identifier, String classIdentifier) {
-		Optional<ConceptProperty> property = getConcept(identifier);
+	public Set<ConceptPropertyValue> getValues(String classIdentifier, String propertyIdentifier) {
+		Optional<ConceptProperty> property = getConcept(propertyIdentifier);
 		if (property.isPresent()) {
+			Optional<ConceptClass> cClass = Optional.empty();
 			if (! Strings.isNullOrEmpty(classIdentifier)) {
-				Optional<ConceptClass> cClass = getConcept(classIdentifier, ConceptClass.class);
-				if ( cClass.isPresent() ) {
-					List<ConceptPropertyValue> cClassPropertyValues 
-						= classPropertyValueRepository.findByConceptClassAndProperty(cClass.get(), property.get());
-					if (! cClassPropertyValues.isEmpty()) {
-						Set<ConceptPropertyValue> values = new HashSet<>();
-						values.addAll(cClassPropertyValues);
-						return values;
-					}
+				 cClass = getConcept(classIdentifier, ConceptClass.class);
+			}
+			return getValues(property.get(), cClass);
+		}		
+		return new HashSet<>();
+	}
+	@Override
+	public Set<ConceptPropertyValue> getValues(ConceptProperty property, Optional<ConceptClass> classIdentifier) {
+		if ( classIdentifier.isPresent()) {
+			
+			List<ConceptPropertyValue> cClassPropertyValues 
+				= classPropertyValueRepository.findByConceptClassAndProperty(classIdentifier.get(), property);
+			if (! cClassPropertyValues.isEmpty()) {
+				Set<ConceptPropertyValue> values = new HashSet<>();
+				values.addAll(cClassPropertyValues);
+				return values;
+			}
+		}
+		return property.getValues();
+		
+	}
+	@Override
+	public Set<ConceptPropertyValue> setValues(ConceptProperty property, Optional<ConceptClass> cClass, List<ConceptPropertyValue> valueList) {
+		Optional<ConceptClassProperty> cClassProperty = Optional.empty();
+		
+		if ( cClass.isPresent()) {
+			cClassProperty = classPropertyRepository.findByConceptClassAndProperty(cClass.get(), property);
+			ConceptClassProperty conceptClassProperty = cClassProperty.orElseGet(new Supplier<ConceptClassProperty>() {
+				@Override
+				public ConceptClassProperty get() {
+					return new ConceptClassProperty(cClass.get(), property);
+				}
+			});
+			return setValues(conceptClassProperty, valueList);
+			
+		}
+		return setValues(property, valueList);
+	}
+	private Set<ConceptPropertyValue> setValues(ConceptClassProperty cClassProperty, List<ConceptPropertyValue> valueList) {
+		for(ConceptPropertyValue value : valueList) {
+			if (value.getId() != null) {
+				// value is stored in the repo & no update is required!
+				cClassProperty.addPropertyValue(value);
+			}
+			else {
+				// need to read the stored 
+				Optional<ConceptPropertyValue> stored = propertyValueService.getConcept(value.getConceptId());
+				if (stored.isPresent()) {
+					cClassProperty.addPropertyValue(propertyValueService.setConcept(stored.get(), value));
 				}
 			}
-			return property.get().getValues();
 		}
+		ConceptClassProperty saved = classPropertyRepository.save(cClassProperty);
+		return saved.getPropertyValues();
+				
+	}
+	@Override
+	public Set<ConceptPropertyValue> setValues(ConceptProperty property, List<ConceptPropertyValue> valueList) {
+		return setValues(property, Optional.empty(), valueList);
+	}
+	@Override
+	public Set<ConceptPropertyValue> setPropertyValues(String identifier, String classIdentifier, List<ConceptPropertyValue> valueIdentifier) {
+		Optional<ConceptProperty> property = getConcept(identifier);
+		if (property.isPresent()) {
+			Optional<ConceptClass> cClass  = Optional.empty();
+			if (! Strings.isNullOrEmpty(classIdentifier)) {
+				cClass = getConcept(classIdentifier, ConceptClass.class);
+			}
+			return setValues(property.get(), cClass, valueIdentifier);
+		}
+		throw new IllegalArgumentException(String.format("Concept Property with ID [%s] not found!", identifier));
 		
-		return new HashSet<>();
+	}
+	@Override
+	public Set<ConceptPropertyValue> setPropertyValuesById(String identifier, String classIdentifier, List<String> valueIdentifier) {
+		List<ConceptPropertyValue> present = new ArrayList<ConceptPropertyValue>();
+		Optional<ConceptProperty> property = getConcept(identifier);
+		if (property.isPresent()) {
+			Optional<ConceptClass> cClass  = Optional.empty();
+			if (! Strings.isNullOrEmpty(classIdentifier)) {
+				cClass = getConcept(classIdentifier, ConceptClass.class);
+			}
+			for (String valueId : valueIdentifier) {
+				Optional<ConceptPropertyValue> value = propertyValueService.getConcept(valueId);
+				if (value.isPresent()) {
+					present.add(value.get());
+				}
+			}
+			return setValues(property.get(),  cClass, present);
+		}
+		throw new IllegalArgumentException(String.format("Concept Property with ID [%s] not found!", identifier));
 	}
 	public boolean deleteConcept(String identifier) {
 		Optional<ConceptProperty> property = typeRepository.findByConceptId(identifier);
@@ -197,6 +280,55 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> getPropertyValues(String conceptPropertyIdentifier,
+			String conceptClassIdentifier) {
+		Optional<ConceptProperty> conceptProperty = getConcept(conceptPropertyIdentifier);
+		if (conceptProperty.isPresent()) {
+			Optional<ConceptClass> conceptClass = getConcept(conceptClassIdentifier, ConceptClass.class);
+			return getValues(conceptProperty.get(), conceptClass);
+		}
+		throw new IllegalArgumentException(String.format("ConceptProperty with ID [%s] not found!", conceptPropertyIdentifier));
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> deletePropertyValues(String conceptPropertyIdentifier,
+			String conceptClassIdentifier, List<String> propertyValueList) {
+		Optional<ConceptProperty> property = getConcept(conceptPropertyIdentifier);
+		if (property.isPresent()) {
+			Optional<ConceptClass> cClass  = getConcept(conceptClassIdentifier, ConceptClass.class);
+			if ( cClass.isPresent() ) {
+				// remove assignement
+				Optional<ConceptClassProperty> ccp = classPropertyRepository.findByConceptClassAndProperty(cClass.get(), property.get());
+				if ( ccp.isPresent() ) {
+					ConceptClassProperty conceptClassProperty = ccp.get();
+					for (String valueId : propertyValueList) {
+						Optional<ConceptPropertyValue> value = getConcept(valueId, ConceptPropertyValue.class);
+						if ( value.isPresent()) {
+							conceptClassProperty.removePropertyValue(value.get());
+						}
+					}
+					ConceptClassProperty changed = classPropertyRepository.save(conceptClassProperty);
+					return changed.getPropertyValues();
+				}
+				
+			}
+			else {
+				ConceptProperty prop = property.get();
+				for (String valueId : propertyValueList) {
+					Optional<ConceptPropertyValue> value = propertyValueService.getConcept(valueId);
+					if (value.isPresent()) {
+						prop.removePropertyValue(value.get());
+					}
+				}
+				ConceptProperty changed = typeRepository.save(prop);
+				return changed.getValues();
+			}
+		}
+		throw new IllegalArgumentException(String.format("Concept Property with ID [%s] not found!", conceptPropertyIdentifier));
+
 	}
 
 }

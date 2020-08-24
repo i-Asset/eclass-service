@@ -86,17 +86,6 @@ public class SemanticLookupController implements SemanticLookupService {
 	public Collection<ConceptProperty> getPropertiesForConceptClass(String identifier, boolean complete) {
 		return conceptService.getProperties(identifier);
 	}
-	@Override
-	public Collection<ConceptProperty> setPropertiesForConceptClass(String identifier, List<String> propIds, List<ConceptProperty> properties) {
-		if ( propIds !=null && !propIds.isEmpty()) {
-			return conceptService.setPropertiesById(identifier, propIds);
-		} if ( properties != null && !properties.isEmpty()) {
-			return conceptService.setProperties(identifier, properties);
-		}
-		else {
-			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
-		}
-	}
 
 	@Override
 	public Optional<ConceptProperty> getProperty(String identifier) {
@@ -122,12 +111,6 @@ public class SemanticLookupController implements SemanticLookupService {
 		return true;
 	}
 	
-	@Override
-	public Collection<ConceptPropertyValue> getValuesForProperty(String identifier, String classIdentifier) {
-		// TODO Auto-generated method stub
-		return propertyService.getValues(identifier, classIdentifier);
-	}
-
 	@Override
 	public Optional<ConceptPropertyUnit> getPropertyUnit(String identifier) {
 		return propertyUnitService.getConcept(identifier);
@@ -172,6 +155,68 @@ public class SemanticLookupController implements SemanticLookupService {
 			propertyValueService.deleteConcept(id);
 		}
 		return true;
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> setPropertyValuesForConceptClass(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, 
+			List<ConceptPropertyValue> conceptPropertyList) {
+		if ( conceptPropertyList != null && !conceptPropertyList.isEmpty()) {
+			return propertyService.setPropertyValues(conceptPropertyIdentifier, conceptClassIdentifier, conceptPropertyList);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
+		}
+	}
+
+	@Override
+	public Collection<ConceptProperty> setPropertiesForConceptClass(String identifier,
+			List<ConceptProperty> conceptPropertyList) {
+		if ( conceptPropertyList != null && !conceptPropertyList.isEmpty()) {
+			return conceptService.setProperties(identifier, conceptPropertyList);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
+		}
+	}
+
+	@Override
+	public Collection<ConceptProperty> setPropertiesByIdForConceptClass(String identifier, List<String> propertyList) {
+		if ( propertyList != null && !propertyList.isEmpty()) {
+			return conceptService.setPropertiesById(identifier, propertyList);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
+		}
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> setPropertyValuesByIdForConceptClass(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<String> propertyValueList) {
+		if ( propertyValueList != null && !propertyValueList.isEmpty()) {
+			return propertyService.setPropertyValuesById(conceptPropertyIdentifier, conceptClassIdentifier, propertyValueList);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid usage: Provide either propertyId's or the full descriptions");
+		}
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> getPropertyValues(String classIdentifier, String propertyIdentifier) {
+		return propertyService.getValues(classIdentifier, propertyIdentifier);
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> getPropertyValues(String conceptPropertyIdentifier) {
+		// get the property values without checking the class
+		return propertyService.getPropertyValues(conceptPropertyIdentifier, null);
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> setPropertyValues(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<String> propertyValueList) {
+		// TODO Auto-generated method stub
+		return propertyService.deletePropertyValues(conceptPropertyIdentifier, conceptClassIdentifier, propertyValueList);
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 
 public interface ConceptClassService extends ConceptService<ConceptClass> {
 	/**
@@ -19,4 +20,10 @@ public interface ConceptClassService extends ConceptService<ConceptClass> {
 
 	Collection<ConceptProperty> setPropertiesById(String identifier, List<String> properties);
 	Collection<ConceptProperty> setProperties(String identifier, List<ConceptProperty> properties);
+
+	Collection<ConceptPropertyValue> setPropertyValuesForConceptClassById(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<String> propertyValueIds);
+
+	Collection<ConceptPropertyValue> setPropertyValuesForConceptClass(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<ConceptPropertyValue> conceptPropertyList);
 }

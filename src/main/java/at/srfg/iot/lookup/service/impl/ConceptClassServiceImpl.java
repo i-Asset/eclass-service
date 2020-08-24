@@ -14,6 +14,7 @@ import com.google.common.base.Strings;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.ConceptClassProperty;
 import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.classification.model.ConceptPropertyValue;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.service.ConceptClassService;
@@ -72,7 +73,7 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	}
 
 	@Override
-	public Optional<ConceptClass> setConcept(ConceptClass property, ConceptClass updated) {
+	public ConceptClass setConcept(ConceptClass property, ConceptClass updated) {
 		// description
 		property.setDescription(updated.getDescription());
 		property.setDescription(updated.getDescription());
@@ -95,15 +96,14 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		// TODO: deal with parent element
 		
 		//
-		typeRepository.save(property);
-		return Optional.of(property);
+		return typeRepository.save(property);
 	}
 
 	@Override
 	public Optional<ConceptClass> setConcept(ConceptClass updated) {
 		Optional<ConceptClass> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			return setConcept(stored.get(), updated);
+			return Optional.of(setConcept(stored.get(), updated));
 		}
 		return Optional.empty();
 	}
@@ -197,9 +197,9 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 					}
 				}
 				else {
-					Optional<ConceptProperty> pe = propertyService.getConcept(property.getConceptId());
-					if (!pe.isPresent()) {
-						Optional<ConceptProperty> stored = propertyService.addConcept(pe.get());
+					Optional<ConceptProperty> storedProperty = propertyService.getConcept(property.getConceptId());
+					if (!storedProperty.isPresent()) {
+						Optional<ConceptProperty> stored = propertyService.addConcept(storedProperty.get());
 						if ( stored.isPresent()) {
 							existing.add(stored.get());
 							ConceptClassProperty ccp = new ConceptClassProperty(cc, stored.get());
@@ -208,12 +208,12 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 					}
 					else {
 						// 
-						Optional<ConceptProperty> stored = propertyService.setConcept(pe.get(),property);
-						if ( stored.isPresent()) {
-							existing.add(stored.get());
-							ConceptClassProperty ccp = new ConceptClassProperty(cc, stored.get());
-							conceptClassPropertyRepository.save(ccp);							
-						}
+						ConceptProperty changed = propertyService.setConcept(storedProperty.get(),property);
+						// add property
+						existing.add(changed);
+						ConceptClassProperty ccp = new ConceptClassProperty(cc, changed);
+						conceptClassPropertyRepository.save(ccp);							
+						
 					}
 				}
 			}
@@ -222,6 +222,23 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		}
 		throw new IllegalArgumentException("Provided ConceptClass cannot be found by it's id: " + identifier);
 
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> setPropertyValuesForConceptClassById(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<String> propertyValueIds) {
+		Optional<ConceptClass> conceptClass = typeRepository.findByConceptId(conceptClassIdentifier);
+		if ( conceptClass.isPresent()) {
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<ConceptPropertyValue> setPropertyValuesForConceptClass(String conceptClassIdentifier,
+			String conceptPropertyIdentifier, List<ConceptPropertyValue> conceptPropertyList) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

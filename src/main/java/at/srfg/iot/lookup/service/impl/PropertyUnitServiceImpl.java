@@ -34,7 +34,7 @@ public class PropertyUnitServiceImpl extends ConceptServiceImpl<ConceptPropertyU
 	}
 
 	@Override
-	public Optional<ConceptPropertyUnit> setConcept(ConceptPropertyUnit unit,
+	public ConceptPropertyUnit setConcept(ConceptPropertyUnit unit,
 			ConceptPropertyUnit updated) {
 		unit.setDescription(updated.getDescription());
 		unit.setDescription(updated.getDescription());
@@ -84,15 +84,14 @@ public class PropertyUnitServiceImpl extends ConceptServiceImpl<ConceptPropertyU
 		}
 		
 		//
-		typeRepository.save(unit);
-		return Optional.of(unit);
+		return typeRepository.save(unit);
 	}
 
 	@Override
 	public Optional<ConceptPropertyUnit> setConcept(ConceptPropertyUnit updated) {
 		Optional<ConceptPropertyUnit> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			return setConcept(stored.get(),updated);
+			return Optional.of(setConcept(stored.get(),updated));
 		}
 		return Optional.empty();
 	}

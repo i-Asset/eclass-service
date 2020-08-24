@@ -47,37 +47,33 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 	public Optional<ConceptBase> setConcept(ConceptBase concept) {
 		Optional<ConceptBase> base = getConcept(concept.getConceptId(), ConceptBase.class);
 		if ( base.isPresent() ) {
-			return setConcept(base.get(), concept);
+			return Optional.of(setConcept(base.get(), concept));
 		}
 		return Optional.empty();
 	}
 
 	@Override
-	public Optional<ConceptBase> setConcept(ConceptBase concept, ConceptBase update) {
+	public ConceptBase setConcept(ConceptBase concept, ConceptBase update) {
 		
 		switch(concept.getConceptType()) {
 		case ConceptBase.CONCEPT_CLASS:
-			Optional<ConceptClass> storedClass = conceptClass.setConcept(
+			 return conceptClass.setConcept(
 					ConceptClass.class.cast(concept),
 					ConceptClass.class.cast(update));
-			return Optional.ofNullable(storedClass.orElse(null));
 		case ConceptBase.PROPERTY:
-			Optional<ConceptProperty> storedProperty = property.setConcept(
+			return property.setConcept(
 					ConceptProperty.class.cast(concept),
 					ConceptProperty.class.cast(update));
-			return Optional.ofNullable(storedProperty.orElse(null));
 		case ConceptBase.PROPERTY_UNIT:
-			Optional<ConceptPropertyUnit> storedUnit = propertyUnit.setConcept(
+			return propertyUnit.setConcept(
 					ConceptPropertyUnit.class.cast(concept),
 					ConceptPropertyUnit.class.cast(update));
-			return Optional.ofNullable(storedUnit.orElse(null));
 		case ConceptBase.PROPERTY_VALUE:
-			Optional<ConceptPropertyValue> storedValue = propertyValue.setConcept(
+			return propertyValue.setConcept(
 					ConceptPropertyValue.class.cast(concept),
 					ConceptPropertyValue.class.cast(update));
-			return Optional.ofNullable(storedValue.orElse(null));
 		default:
-			return Optional.empty();
+			throw new IllegalStateException("Additional Concept Type not handled: " +concept.getConceptType());
 		}
 	}
 	
