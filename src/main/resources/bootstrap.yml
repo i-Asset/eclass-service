@@ -51,6 +51,9 @@ spring:
     dbcp:
       default-auto-commit: false
 
+solr:
+  host: ${SOLR_HOST:http://localhost:8983/solr/}
+
 management:
   endpoints:
     web:
