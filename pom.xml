@@ -12,8 +12,8 @@
 	<groupId>at.srfg.iot</groupId>
 	<artifactId>semantic-lookup-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>EClass Service</name>
-	<description>Semantic eCl@ss Service)</description>
+	<name>Semantic Lookup Service</name>
+	<description>Service providing a IEC 61360 compatible taxonomy</description>
 
 	<properties>
 		<java.version>1.8</java.version>

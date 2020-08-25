@@ -12,11 +12,11 @@ and the eClass CSV (Downloads from eClass Sites) files must be loaded into the d
 
 ## data 
 
-The tables for storing the taxonomy are created on startup. See the [swagger documentation](http://www.localhost:8084/swagger-ui.html) for using the services
+The tables for storing the taxonomy are created on startup. See the [swagger documentation](http://www.localhost:8084/swagger-ui.html) for using the services (when running the system locally). 
 
 ## indexing
 
-Each update of the taxonomy causes a reindexing of the entry with the indexing service.
+When running in a cloud environment, the system integrates with an instance of the [solr-indexing](https://github.com/i-Asset/solr-indexing) service. When active, each change of the taxonomy data causes a reindexing of the respective with the indexing service. 
 
 ### Service build and startup
 
@@ -25,6 +25,5 @@ Each update of the taxonomy causes a reindexing of the entry with the indexing s
  ```
 
   
- @TODO: point to the proper service
- The Service may be verified online [Nimble-Staging](http://nimble-staging.salzburgresearch.at/index/actuator/info)
+ The Service may be verified online [iAsset-Staging](http://iasset.salzburgresearch.at/semantic-lookup-service/actuator/info)
  
