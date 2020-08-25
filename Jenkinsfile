@@ -84,7 +84,7 @@ node('iasset-jenkins-slave') {
     if( env.TAG_NAME ==~ /^\d+.\d+.\d+$/) {
 
         stage('Clone and Update') {
-            git(url: 'https://github.com/i-Asset/eclass-service.git', branch: env.BRANCH_NAME)
+            git(url: 'https://github.com/i-Asset/semantic-lookup-service.git', branch: env.BRANCH_NAME)
         }
 
         stage('Set version') {
@@ -116,12 +116,12 @@ node('iasset-jenkins-slave') {
         }
 
         stage('Push Docker') {
-            sh 'docker push iassetplatform/eclass-service:' + env.TAG_NAME
-            sh 'docker push iassetplatform/eclass-service:latest'
+            sh 'docker push iassetplatform/semantic-lookup-service:' + env.TAG_NAME
+            sh 'docker push iassetplatform/semantic-lookup-service:latest'
         }
 
         stage('Deploy PROD') {
-            sh 'ssh prod "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single eclass-service"'
+            sh 'ssh prod "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single semantic-lookup-service"'
         }
 
     }
