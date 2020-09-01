@@ -26,16 +26,16 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 	@Override
 	public Optional<ConceptBase> addConcept(ConceptBase concept) {
 		switch(concept.getConceptType()) {
-		case ConceptBase.CONCEPT_CLASS:
+		case ConceptClass:
 			Optional<ConceptClass> storedClass = conceptClass.addConcept(ConceptClass.class.cast(concept));
 			return Optional.ofNullable(storedClass.orElse(null));
-		case ConceptBase.PROPERTY:
+		case ConceptProperty:
 			Optional<ConceptProperty> storedProperty = property.addConcept(ConceptProperty.class.cast(concept));
 			return Optional.ofNullable(storedProperty.orElse(null));
-		case ConceptBase.PROPERTY_UNIT:
+		case ConceptPropertyUnit:
 			Optional<ConceptPropertyUnit> storedUnit = propertyUnit.addConcept(ConceptPropertyUnit.class.cast(concept));
 			return Optional.ofNullable(storedUnit.orElse(null));
-		case ConceptBase.PROPERTY_VALUE:
+		case ConceptPropertyValue:
 			Optional<ConceptPropertyValue> storedValue = propertyValue.addConcept(ConceptPropertyValue.class.cast(concept));
 			return Optional.ofNullable(storedValue.orElse(null));
 		default:
@@ -56,19 +56,19 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 	public ConceptBase setConcept(ConceptBase concept, ConceptBase update) {
 		
 		switch(concept.getConceptType()) {
-		case ConceptBase.CONCEPT_CLASS:
+		case ConceptClass:
 			 return conceptClass.setConcept(
 					ConceptClass.class.cast(concept),
 					ConceptClass.class.cast(update));
-		case ConceptBase.PROPERTY:
+		case ConceptProperty:
 			return property.setConcept(
 					ConceptProperty.class.cast(concept),
 					ConceptProperty.class.cast(update));
-		case ConceptBase.PROPERTY_UNIT:
+		case ConceptPropertyUnit:
 			return propertyUnit.setConcept(
 					ConceptPropertyUnit.class.cast(concept),
 					ConceptPropertyUnit.class.cast(update));
-		case ConceptBase.PROPERTY_VALUE:
+		case ConceptPropertyValue:
 			return propertyValue.setConcept(
 					ConceptPropertyValue.class.cast(concept),
 					ConceptPropertyValue.class.cast(update));
