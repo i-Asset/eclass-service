@@ -25,7 +25,7 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 
 	@Override
 	public Optional<ConceptBase> addConcept(ConceptBase concept) {
-		switch(concept.getConceptType()) {
+		switch(concept.getBaseType()) {
 		case ConceptClass:
 			Optional<ConceptClass> storedClass = conceptClass.addConcept(ConceptClass.class.cast(concept));
 			return Optional.ofNullable(storedClass.orElse(null));
@@ -55,7 +55,7 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 	@Override
 	public ConceptBase setConcept(ConceptBase concept, ConceptBase update) {
 		
-		switch(concept.getConceptType()) {
+		switch(concept.getBaseType()) {
 		case ConceptClass:
 			 return conceptClass.setConcept(
 					ConceptClass.class.cast(concept),
@@ -73,7 +73,7 @@ public class ConceptBaseServiceImpl extends ConceptServiceImpl<ConceptBase> impl
 					ConceptPropertyValue.class.cast(concept),
 					ConceptPropertyValue.class.cast(update));
 		default:
-			throw new IllegalStateException("Additional Concept Type not handled: " +concept.getConceptType());
+			throw new IllegalStateException("Additional Concept Type not handled: " +concept.getBaseType());
 		}
 	}
 	
