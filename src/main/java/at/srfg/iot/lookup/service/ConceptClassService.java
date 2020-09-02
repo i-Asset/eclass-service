@@ -15,6 +15,7 @@ public interface ConceptClassService extends ConceptService<ConceptClass> {
 	 * @return
 	 */
 	List<ConceptProperty> getProperties(String identifier);
+	List<ConceptProperty> getProperties(String identifier, boolean complete);
 	
 	Optional<ConceptClass> addConcept(String parentConceptIdentifier, ConceptClass newConcept);
 

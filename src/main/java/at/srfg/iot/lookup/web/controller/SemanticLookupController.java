@@ -84,7 +84,7 @@ public class SemanticLookupController implements SemanticLookupService {
 	}
 	@Override
 	public Collection<ConceptProperty> getPropertiesForConceptClass(String identifier, boolean complete) {
-		return conceptService.getProperties(identifier);
+		return conceptService.getProperties(identifier, complete);
 	}
 
 	@Override

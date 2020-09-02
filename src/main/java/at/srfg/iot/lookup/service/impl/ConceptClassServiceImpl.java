@@ -135,10 +135,13 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 
 	@Override
 	public List<ConceptProperty> getProperties(String identifier) {
+		return getProperties(identifier, true);
+	}
+	public List<ConceptProperty> getProperties(String identifier, boolean complete) {
 		Optional<ConceptClass> ccOpt = getConcept(identifier);
 		if ( ccOpt.isPresent()) {
 			ConceptClass cc = ccOpt.get();
-			return getProperties(cc); 
+			return getProperties(cc, complete); 
 		}
 		return Collections.emptyList();
 	}
@@ -147,14 +150,15 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	 * @param conceptClass
 	 * @return
 	 */
-	private List<ConceptProperty> getProperties(ConceptClass conceptClass) {
+	private List<ConceptProperty> getProperties(ConceptClass conceptClass, boolean complete) {
 		List<ConceptProperty> properties = new ArrayList<>();
-		if ( conceptClass.getParentElement() != null) {
-			properties.addAll(getProperties(conceptClass.getParentElement()));
+		if ( complete && conceptClass.getParentElement() != null) {
+			properties.addAll(getProperties(conceptClass.getParentElement(), complete));
 		}
 		properties.addAll(conceptClassPropertyRepository.getProperties(conceptClass));
 		return properties;
 	}
+	
 
 	@Override
 	public Collection<ConceptProperty> setPropertiesById(String identifier, List<String> properties) {
