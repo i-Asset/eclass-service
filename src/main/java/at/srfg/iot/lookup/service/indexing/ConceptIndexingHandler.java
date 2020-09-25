@@ -2,6 +2,8 @@ package at.srfg.iot.lookup.service.indexing;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import at.srfg.indexing.model.common.DynamicName;
 import at.srfg.indexing.model.common.PropertyType;
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptBaseDescription;
 import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
@@ -96,13 +97,21 @@ public class ConceptIndexingHandler {
 	 * @param concept
 	 */
 	private void handleConceptDescription(ConceptBase base, Concept concept) {
-		
-		for (ConceptBaseDescription d : base.getDescription()) {
-			concept.setLabel(d.getLanguage(), d.getPreferredName());
-			if ( d.getDefinition()!= null ) {
-				concept.addDescription(d.getLanguage(), d.getDefinition());
-			}
+		Map<Locale, String> prefLabel = base.getPreferredLabel();
+		for ( Locale locale : prefLabel.keySet()) {
+			concept.setLabel(locale, prefLabel.get(locale));
 		}
+		// TODO: process alternate Label, hidden label, definiton & comment
+//		Map<Locale, Set<String>> altLabel = base.getAlternateLabel();
+//		for ( Locale locale : prefLabel.keySet()) {
+//			concept.setAlternateLabel(locale, altLabel.get(locale));
+//		}
+//		for (ConceptBaseDescription d : base.getDescription()) {
+//			concept.setLabel(d.getLanguage(), d.getPreferredName());
+//			if ( d.getDefinition()!= null ) {
+//				concept.addDescription(d.getLanguage(), d.getDefinition());
+//			}
+//		}
 	}
 	/**
 	 * Map all properties of the {@link ConceptClass} and add them to the {@link ClassType}
@@ -131,8 +140,9 @@ public class ConceptIndexingHandler {
 		// - the (preferred labels)
 		// - the short name
 		// - the localName
-		for (String langString : property.getLanguages()) {
-			pType.addItemFieldName(DynamicName.getDynamicFieldPart(property.getPreferredName(langString)));
+		Map<Locale, String> prefLabel = property.getPreferredLabel();
+		for ( Locale locale : prefLabel.keySet()) {
+			pType.addItemFieldName(DynamicName.getDynamicFieldPart(prefLabel.get(locale)));
 		}
 		// add 
 		pType.addItemFieldName(DynamicName.getDynamicFieldPart(property.getShortName()));

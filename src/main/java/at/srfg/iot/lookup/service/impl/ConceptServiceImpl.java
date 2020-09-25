@@ -2,13 +2,14 @@ package at.srfg.iot.lookup.service.impl;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
 import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.ConceptBaseDescription;
 import at.srfg.iot.lookup.repository.ConceptRepository;
 import at.srfg.iot.lookup.service.ConceptService;
 /**
@@ -19,6 +20,7 @@ import at.srfg.iot.lookup.service.ConceptService;
  */
 @Service
 public abstract class ConceptServiceImpl<T extends ConceptBase> implements ConceptService<T> {
+	private Logger logger = LoggerFactory.getLogger(ConceptServiceImpl.class);
 	@Autowired
 	private ConceptRepository<ConceptBase> baseRepository;
 	@Autowired
@@ -43,6 +45,7 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 	 */
 	protected Optional<T> getStoredConcept(T updated) {
 		if (! Strings.isNullOrEmpty(updated.getConceptId())) {
+			logger.info("Searching for {}", updated.getConceptId());
 			return typeRepository.findByConceptId(updated.getConceptId());
 		}
 		return Optional.empty();
@@ -61,16 +64,16 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 		}
 		return false;
 	}
-	@Override
-	public Optional<T> setDescription(String identifier, ConceptBaseDescription desc) {
-		Optional<T> baseOpt = getConcept(identifier);
-		if ( baseOpt.isPresent()) {
-			T base = baseOpt.get();
-			base.setDescription(desc.getLanguage(), desc.getPreferredName(), desc.getDefinition());
-			return Optional.of(base);
-		}
-		return baseOpt;
-	}
+//	@Override
+//	public Optional<T> setDescription(String identifier, ConceptBaseDescription desc) {
+//		Optional<T> baseOpt = getConcept(identifier);
+//		if ( baseOpt.isPresent()) {
+//			T base = baseOpt.get();
+//			base.setDescription(desc.getLanguage(), desc.getPreferredName(), desc.getDefinition());
+//			return Optional.of(base);
+//		}
+//		return baseOpt;
+//	}
 	@Override
 	public boolean conceptExists(String identifier) {
 		return baseRepository.existsByConceptId(identifier);

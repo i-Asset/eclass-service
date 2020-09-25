@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
@@ -42,19 +43,14 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 			return ccOpt;
 		}
 	}
-
-	@Override
-	public Optional<ConceptClass> addConcept(String parentConceptIdentifier, ConceptClass newConcept) {
-		ConceptClass parent = null;
-		if (! Strings.isNullOrEmpty(parentConceptIdentifier)) {
-			Optional<ConceptClass> parentClass = getConcept(parentConceptIdentifier);
-			if (parentClass.isPresent()) {
-				parent = parentClass.get();
-			}
-		}
+	private Optional<ConceptClass> addConcept(ConceptClass parent, ConceptClass newConcept) {
 		ConceptClass toStore = new ConceptClass(parent, newConcept.getConceptId());
 		toStore.setShortName(newConcept.getShortName());
-		toStore.setDescription(newConcept.getDescription());
+		toStore.setPreferredLabel(newConcept.getPreferredLabel());
+		toStore.setAlternateLabel(newConcept.getAlternateLabel());
+		toStore.setHiddenLabel(newConcept.getHiddenLabel());
+		toStore.setDefinition(newConcept.getDefinition());
+		toStore.setComment(newConcept.getComment());
 		toStore.setNote(newConcept.getNote());
 		toStore.setRemark(newConcept.getRemark());
 		toStore.setRevisionNumber(newConcept.getRevisionNumber());
@@ -64,19 +60,54 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		// store the unit
 		ConceptClass stored = typeRepository.save(toStore);
 		indexer.store(toStore);
-		return Optional.of(stored);
+		return Optional.of(stored);		
+	}
+	@Override
+	public Optional<ConceptClass> addConcept(String parentConceptIdentifier, ConceptClass newConcept) {
+		ConceptClass parent = null;
+		if (! Strings.isNullOrEmpty(parentConceptIdentifier)) {
+			Optional<ConceptClass> parentClass = getConcept(parentConceptIdentifier);
+			if (parentClass.isPresent()) {
+				parent = parentClass.get();
+			}
+		}
+		return addConcept(parent, newConcept);
+//		ConceptClass toStore = new ConceptClass(parent, newConcept.getConceptId());
+//		toStore.setShortName(newConcept.getShortName());
+//		toStore.setPreferredLabel(newConcept.getPreferredLabel());
+//		toStore.setAlternateLabel(newConcept.getAlternateLabel());
+//		toStore.setHiddenLabel(newConcept.getHiddenLabel());
+//		toStore.setDefinition(newConcept.getDefinition());
+//		toStore.setComment(newConcept.getComment());
+//		toStore.setNote(newConcept.getNote());
+//		toStore.setRemark(newConcept.getRemark());
+//		toStore.setRevisionNumber(newConcept.getRevisionNumber());
+//		// 
+//		toStore.setCodedName(newConcept.getCodedName());
+//		toStore.setLevel(newConcept.getLevel());
+//		// store the unit
+//		ConceptClass stored = typeRepository.save(toStore);
+//		indexer.store(toStore);
+//		return Optional.of(stored);
 	}
 
 	@Override
 	public Optional<ConceptClass> addConcept(ConceptClass newConcept) {
-		return addConcept(null, newConcept);
+		ConceptClass parent = newConcept.getParentElement();
+		if ( parent != null ) {
+			Optional<ConceptClass> parentClass = getStoredConcept(parent);
+			return addConcept(parentClass.orElse(null), newConcept);
+		}
+		return addConcept(parent,newConcept);
 	}
 
 	@Override
 	public ConceptClass setConcept(ConceptClass property, ConceptClass updated) {
-		// description
-		property.setDescription(updated.getDescription());
-		property.setDescription(updated.getDescription());
+		property.setPreferredLabel(updated.getPreferredLabel());
+		property.setAlternateLabel(updated.getAlternateLabel());
+		property.setHiddenLabel(updated.getHiddenLabel());
+		property.setDefinition(updated.getDefinition());
+		property.setComment(updated.getComment());
 		// note
 		if (! Strings.isNullOrEmpty(updated.getNote())) {
 			property.setNote(updated.getNote());
@@ -93,19 +124,32 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		if (! Strings.isNullOrEmpty(updated.getCodedName())) {
 			property.setCodedName(updated.getCodedName());
 		}
-		// TODO: deal with parent element
-		
+		// deal with parent element
+		if ( updated.getParentElement()!= null) {
+			Optional<ConceptClass> parent = setConcept(updated.getParentElement()); 
+			// parent "should be" present
+			if (parent.isPresent()) {
+				property.setParentElement(parent.get());
+			}
+		}
+		//
+//		indexer.store(property);
 		//
 		return typeRepository.save(property);
 	}
 
+	@Transactional
 	@Override
 	public Optional<ConceptClass> setConcept(ConceptClass updated) {
 		Optional<ConceptClass> stored = getStoredConcept(updated);
 		if ( stored.isPresent()) {
-			return Optional.of(setConcept(stored.get(), updated));
+			ConceptClass saved = setConcept(stored.get(),  updated);
+			indexer.store(saved);
+			return Optional.of(saved);
 		}
-		return Optional.empty();
+		else {
+			return addConcept(updated);
+		}
 	}
 	public boolean deleteConcept(String identifier) {
 		Optional<ConceptClass> conceptClass = typeRepository.findByConceptId(identifier);

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import at.srfg.iot.classification.api.SemanticLookupService;
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptBaseDescription;
 import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.classification.model.ConceptPropertyUnit;
 import at.srfg.iot.classification.model.ConceptPropertyValue;
@@ -78,10 +77,7 @@ public class SemanticLookupController implements SemanticLookupService {
 		}
 		return true;
 	}
-	@Override
-	public Optional<ConceptBase> setConceptDescription(String identifier, ConceptBaseDescription description) {
-		return conceptBase.setDescription(identifier, description);
-	}
+
 	@Override
 	public Collection<ConceptProperty> getPropertiesForConceptClass(String identifier, boolean complete) {
 		return conceptService.getProperties(identifier, complete);

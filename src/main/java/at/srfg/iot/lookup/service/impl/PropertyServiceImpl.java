@@ -62,7 +62,9 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 		toStore.setCoded(newConcept.isCoded());
 		toStore.setDataType(newConcept.getDataType());
 		toStore.setRevisionNumber(newConcept.getRevisionNumber());
-		toStore.setDescription(newConcept.getDescription());
+		toStore.setPreferredLabel(newConcept.getPreferredLabel());
+		toStore.setAlternateLabel(newConcept.getAlternateLabel());
+		toStore.setHiddenLabel(newConcept.getHiddenLabel());
 		toStore.setNote(newConcept.getNote());
 		toStore.setRemark(newConcept.getRemark());
 		toStore.setShortName(newConcept.getShortName());
@@ -137,7 +139,9 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 	@Override
 	public ConceptProperty setConcept(ConceptProperty property, ConceptProperty updated) {
 		// description
-		property.setDescription(updated.getDescription());
+		property.setPreferredLabel(updated.getPreferredLabel());
+		property.setAlternateLabel(updated.getAlternateLabel());
+		property.setHiddenLabel(updated.getHiddenLabel());
 		// note
 		if (! Strings.isNullOrEmpty(updated.getNote())) {
 			property.setNote(updated.getNote());
@@ -171,7 +175,10 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 		if ( stored.isPresent()) {
 			return Optional.of(setConcept(stored.get(), updated));
 		}
-		return Optional.empty();
+		else {
+			return addConcept(updated);
+		}
+//		return Optional.empty();
 	}
 
 	@Override

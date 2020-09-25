@@ -117,6 +117,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+        <!-- Jena for Ontology Import -->
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>3.9.0</version>
+            <type>pom</type>
+        </dependency>
 
 
 		<!--swagger dependencies-->

@@ -3,7 +3,6 @@ package at.srfg.iot.lookup.service;
 import java.util.Optional;
 
 import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.ConceptBaseDescription;
 
 public interface ConceptService<T extends ConceptBase> {
 	/**
@@ -51,5 +50,5 @@ public interface ConceptService<T extends ConceptBase> {
 	 * @param desc
 	 * @return
 	 */
-	Optional<T> setDescription(String identifier, ConceptBaseDescription desc);
+//	Optional<T> setDescription(String identifier, ConceptBaseDescription desc);
 }

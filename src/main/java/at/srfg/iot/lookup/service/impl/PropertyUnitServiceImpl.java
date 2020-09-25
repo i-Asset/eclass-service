@@ -16,7 +16,9 @@ public class PropertyUnitServiceImpl extends ConceptServiceImpl<ConceptPropertyU
 	public Optional<ConceptPropertyUnit> addConcept(ConceptPropertyUnit newConcept) {
 		ConceptPropertyUnit toStore = new ConceptPropertyUnit(newConcept.getConceptId());
 		toStore.setShortName(newConcept.getShortName());
-		toStore.setDescription(newConcept.getDescription());
+		toStore.setPreferredLabel(newConcept.getPreferredLabel());
+		toStore.setAlternateLabel(newConcept.getAlternateLabel());
+		toStore.setHiddenLabel(newConcept.getHiddenLabel());
 		toStore.setNote(newConcept.getNote());
 		toStore.setRemark(newConcept.getRemark());
 		toStore.setRevisionNumber(newConcept.getRevisionNumber());
@@ -36,8 +38,9 @@ public class PropertyUnitServiceImpl extends ConceptServiceImpl<ConceptPropertyU
 	@Override
 	public ConceptPropertyUnit setConcept(ConceptPropertyUnit unit,
 			ConceptPropertyUnit updated) {
-		unit.setDescription(updated.getDescription());
-		unit.setDescription(updated.getDescription());
+		unit.setPreferredLabel(updated.getPreferredLabel());
+		unit.setAlternateLabel(updated.getAlternateLabel());
+		unit.setHiddenLabel(updated.getHiddenLabel());
 		// note
 		if (! Strings.isNullOrEmpty(updated.getNote())) {
 			unit.setNote(updated.getNote());

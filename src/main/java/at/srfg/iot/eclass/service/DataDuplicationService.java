@@ -1,6 +1,7 @@
 package at.srfg.iot.eclass.service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -80,7 +81,7 @@ public class DataDuplicationService {
 			ConceptProperty cc = fromPropertyDefinition(ccOpt.get());
 			return Optional.of(cc);
 		}
-		return Optional.empty();
+		return Optional.ofNullable(null);
 	}
 	public Optional<ConceptPropertyUnit> copyUnit(String irdi) {
 		Optional<at.srfg.iot.eclass.model.PropertyUnit> ccOpt = unitRepo.findById(irdi);
@@ -142,7 +143,8 @@ public class DataDuplicationService {
 		//
 		prop.setCategory(eClass.getCategory());
 		prop.setDataType(DataTypeEnum.fromString(eClass.getDataType()));
-		prop.setDescription(eClass.getIsoLanguageCode(), eClass.getPreferredName(), eClass.getDefinition());
+		prop.setPreferredLabel(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getPreferredName());
+		prop.setDefinition(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getDefinition());
 		prop.setNote(eClass.getNote());
 		prop.setRemark(eClass.getRemark());
 		prop.setShortName(eClass.getShortName());
@@ -184,7 +186,9 @@ public class DataDuplicationService {
 		ConceptPropertyUnit target = new ConceptPropertyUnit(eClass.getIrdiUN());
 		//target.setVersionDate(eClass.getVersionDate());
 		//target.setRevisionNumber(eClass.get);
-		target.setDescription("en", eClass.getShortName(), eClass.getDefinition());
+		target.setPreferredLabel(Locale.ENGLISH, eClass.getStructuredNaming());
+		target.setDefinition(Locale.ENGLISH, eClass.getDefinition());
+		target.setComment(Locale.ENGLISH, eClass.getComment());
 		target.setSiName(eClass.getSiName());
 		target.setSiNotation(eClass.getSiNotation());
 		target.setEceCode(eClass.getEceCode());
@@ -205,7 +209,8 @@ public class DataDuplicationService {
 		target.setReference(source.getReference());
 		target.setShortName(source.getShortName());
 		target.setValue(source.getPreferredName());
-		target.setDescription(source.getIsoLanguage(), source.getPreferredName(), source.getDefinition());
+		target.setPreferredLabel(Locale.forLanguageTag(source.getIsoLanguage()), source.getPreferredName());
+		target.setDefinition(Locale.forLanguageTag(source.getIsoLanguage()), source.getDefinition());
 		conceptPropertyValueRepo.save(target);
 		return target;
 	}
@@ -271,7 +276,8 @@ public class DataDuplicationService {
 		ConceptClass cClass = new ConceptClass(parent, eClass.getIrdiCC());
 		cClass.setVersionDate(eClass.getVersionDate());
 		cClass.setRevisionNumber(eClass.getRevisionNumber());
-		cClass.setDescription(eClass.getIsoLanguageCode(), eClass.getPreferredName(), eClass.getDefinition());
+		cClass.setPreferredLabel(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getPreferredName());
+		cClass.setDefinition(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getDefinition());
 		cClass.setNote(eClass.getNote());
 		cClass.setRemark(eClass.getRemark());
 		cClass.setShortName(eClass.getCodedName());

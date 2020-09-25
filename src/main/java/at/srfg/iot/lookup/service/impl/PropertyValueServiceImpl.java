@@ -16,12 +16,15 @@ public class PropertyValueServiceImpl extends ConceptServiceImpl<ConceptProperty
 	public Optional<ConceptPropertyValue> addConcept(ConceptPropertyValue newConcept) {
 		ConceptPropertyValue toStore = new ConceptPropertyValue(newConcept.getConceptId());
 		toStore.setShortName(newConcept.getShortName());
-		toStore.setDescription(newConcept.getDescription());
+		toStore.setPreferredLabel(newConcept.getPreferredLabel());
+		toStore.setAlternateLabel(newConcept.getAlternateLabel());
+		toStore.setHiddenLabel(newConcept.getHiddenLabel());
+		toStore.setDefinition(newConcept.getDefinition());
+		toStore.setComment(newConcept.getComment());
 		toStore.setNote(newConcept.getNote());
 		toStore.setRemark(newConcept.getRemark());
 		toStore.setRevisionNumber(newConcept.getRevisionNumber());
 		// 
-		toStore.setDefinition(newConcept.getDefinition());
 		toStore.setDataType(newConcept.getDataType());
 		toStore.setReference(newConcept.getReference());
 		toStore.setValue(newConcept.getValue());
@@ -31,36 +34,37 @@ public class PropertyValueServiceImpl extends ConceptServiceImpl<ConceptProperty
 	}
 
 	@Override
-	public ConceptPropertyValue setConcept(ConceptPropertyValue property,
+	public ConceptPropertyValue setConcept(ConceptPropertyValue toStore,
 			ConceptPropertyValue updated) {
-		property.setDescription(updated.getDescription());
-		property.setDescription(updated.getDescription());
+		// labels
+		toStore.setPreferredLabel(updated.getPreferredLabel());
+		toStore.setAlternateLabel(updated.getAlternateLabel());
+		toStore.setHiddenLabel(updated.getHiddenLabel());
+		toStore.setDefinition(updated.getDefinition());
+		toStore.setComment(updated.getComment());
+		
 		// note
 		if (! Strings.isNullOrEmpty(updated.getNote())) {
-			property.setNote(updated.getNote());
+			toStore.setNote(updated.getNote());
 		}
 		// remark
 		if (! Strings.isNullOrEmpty(updated.getRemark())) {
-			property.setRemark(updated.getRemark());
+			toStore.setRemark(updated.getRemark());
 		}
 		// shortName
 		if (! Strings.isNullOrEmpty(updated.getShortName())) {
-			property.setShortName(updated.getShortName());
+			toStore.setShortName(updated.getShortName());
 		}
 		// reference
 		if (! Strings.isNullOrEmpty(updated.getReference())) {
-			property.setReference(updated.getReference());
-		}
-		// definition
-		if (! Strings.isNullOrEmpty(updated.getDefinition())) {
-			property.setDefinition(updated.getDefinition());
+			toStore.setReference(updated.getReference());
 		}
 		// value
 		if (! Strings.isNullOrEmpty(updated.getValue())) {
-			property.setValue(updated.getValue());
+			toStore.setValue(updated.getValue());
 		}
 		//
-		return typeRepository.save(property);
+		return typeRepository.save(toStore);
 	}
 
 	@Override
