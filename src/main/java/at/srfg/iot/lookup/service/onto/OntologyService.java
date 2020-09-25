@@ -13,7 +13,7 @@ public interface OntologyService {
 	 */
     public void upload(String mimeType, String onto, List<String> namespaces);
 
-	boolean deleteNamespace(String namespace);
+	boolean delete(List<String> namespace);
 	
 
 

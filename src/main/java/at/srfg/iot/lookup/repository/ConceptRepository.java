@@ -11,5 +11,6 @@ public interface ConceptRepository<T extends ConceptBase> extends CrudRepository
 	Optional<T> findByConceptId(String conceptId);
 	Optional<T> findByNameSpaceAndLocalName(String nameSpace, String localName);
 	Optional<T> findBySupplierAndLocalName(String supplier, String localName);
+	long deleteByNameSpace(String nameSpace);
 
 }

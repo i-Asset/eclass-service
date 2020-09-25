@@ -42,7 +42,7 @@ public class PropertyServiceImpl extends ConceptServiceImpl<ConceptProperty> imp
 	private PropertyValueServiceImpl propertyValueService;
 
 	@Autowired
-	DataDuplicationService duplexer;
+	private DataDuplicationService duplexer;
 	
 	public Optional<ConceptProperty> getConcept(String identifier) {
 		Optional<ConceptProperty> ccOpt = typeRepository.findByConceptId(identifier);

@@ -33,6 +33,7 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	private PropertyService propertyService;
 	@Autowired
 	private ConceptClassPropertyRepository conceptClassPropertyRepository;
+	
 	public Optional<ConceptClass> getConcept(String identifier) {
 		Optional<ConceptClass> ccOpt = typeRepository.findByConceptId(identifier);
 		if (!ccOpt.isPresent()) {
@@ -272,6 +273,15 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 
 	}
 
+	@Transactional
+	@Override
+	public long deleteNameSpace(String nameSpace) {
+		long deleteCount = super.deleteNameSpace(nameSpace);
+		if ( deleteCount > 0 ) {
+//			indexer.
+		}
+		return deleteCount;
+	}
 	@Override
 	public Collection<ConceptPropertyValue> setPropertyValuesForConceptClassById(String conceptClassIdentifier,
 			String conceptPropertyIdentifier, List<String> propertyValueIds) {

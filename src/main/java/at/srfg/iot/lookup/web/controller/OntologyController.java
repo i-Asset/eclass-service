@@ -30,8 +30,8 @@ public class OntologyController {
 			notes = "Read the ConceptClass with it's full URI or IRDI")
 	@RequestMapping(
 			method = RequestMethod.POST,
-			path="/vocabulary/upload", consumes = {"application/rdf+xml", "application/turtle"})
-	public Boolean getConceptClass(
+			path="/vocabulary", consumes = {"application/rdf+xml", "application/turtle"})
+	public Boolean upload(
 			@RequestHeader(value="Content-Type", required = false, defaultValue = "application/rdf+xml")
 			String mimeType,
 			@RequestParam("nameSpace") 
@@ -41,5 +41,17 @@ public class OntologyController {
 		
 		onto.upload(mimeType, content, nameSpace);
 		return true;
+	}
+	@ApiOperation(
+			value = "Delete entire nameSpaces from the semantic lookup ",
+			notes = "The namespaces are deleted in ConceptClass, Property, PropertyValue and PropertyUnit")
+	@RequestMapping(
+			method = RequestMethod.DELETE,
+			path="/vocabulary")
+	public Boolean delete(
+			@RequestParam("nameSpace") 
+			List<String> nameSpace) {
+		
+		return onto.delete(nameSpace);
 	}
 }

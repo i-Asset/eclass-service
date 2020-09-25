@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
@@ -36,6 +37,11 @@ public abstract class ConceptServiceImpl<T extends ConceptBase> implements Conce
 			}
 		}
 		return Optional.empty();
+	}
+	@Transactional
+	@Override
+	public long deleteNameSpace(String nameSpace) {
+		return typeRepository.deleteByNameSpace(nameSpace);
 	}
 	/**
 	 * Read the stored concept based on it's {@link ConceptBase#getConceptId()} prior

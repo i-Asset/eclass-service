@@ -44,6 +44,12 @@ public interface ConceptService<T extends ConceptBase> {
 	 */
 	boolean deleteConcept(String identifier);
 	/**
+	 * Delete all concepts of a given namespace
+	 * @param nameSpace
+	 * @return
+	 */
+	long deleteNameSpace(String nameSpace);
+	/**
 	 * change the description of an existing element, setting the description to null
 	 * will remove an language description
 	 * @param identifier

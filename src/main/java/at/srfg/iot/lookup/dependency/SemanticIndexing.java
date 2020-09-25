@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import at.srfg.indexing.model.common.ClassType;
 import at.srfg.indexing.model.common.PropertyType;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 /**
  * Redefinition - Feign does not support multiple inheritance
  * @author dglachs
@@ -66,6 +68,21 @@ public interface SemanticIndexing {
 			path="/propertyType")
 	public boolean deletePropertyType(
 			@RequestParam(name = "id") 
-			List<String> uri) throws Exception;			
+			List<String> uri) throws Exception;
+	/**
+	 * Remove the provided class from the index
+	 * @param uri
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(
+			method = RequestMethod.DELETE,
+			path="/namespace")
+	@ApiOperation(
+			value = "Delete all concepts of the provided namespaces. Deletes from multiple collections", 
+			notes = "All concepts are removed!")
+	public long deleteConcepts(
+			@ApiParam("The nameSpace to remove")
+			@RequestParam(name = "nameSpace") String uri) throws Exception ;
 	
 }

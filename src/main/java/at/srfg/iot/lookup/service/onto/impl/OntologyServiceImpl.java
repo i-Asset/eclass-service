@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -36,6 +35,7 @@ import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.ConceptProperty;
 import at.srfg.iot.classification.model.DataTypeEnum;
+import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.service.ConceptClassService;
 import at.srfg.iot.lookup.service.PropertyService;
 import at.srfg.iot.lookup.service.onto.OntologyService;
@@ -43,20 +43,32 @@ import at.srfg.iot.lookup.service.onto.OntologyService;
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
+	@Autowired
+	SemanticIndexing indexer;
 	
 	@Autowired
 	PropertyService propertyService;
 	@Autowired
 	ConceptClassService conceptClassService;
 
-	private static final Logger logger = LoggerFactory.getLogger(OntologyServiceImpl.class);
+	protected static final Logger logger = LoggerFactory.getLogger(OntologyServiceImpl.class);
 
 
 	@Override
-	public boolean deleteNamespace(String namespace) {
-		// @TODO: lookup.delete()
-//		propRepo.deleteByNameSpace(namespace);
-//		classRepository.deleteByNameSpace(namespace);
+	public boolean delete(List<String> namespace) {
+		if ( namespace != null && !namespace.isEmpty()) {
+			for (String ns : namespace) {
+				try {
+					propertyService.deleteNameSpace(ns);
+					conceptClassService.deleteNameSpace(ns);
+				
+				// 
+					indexer.deleteConcepts(ns);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 	
