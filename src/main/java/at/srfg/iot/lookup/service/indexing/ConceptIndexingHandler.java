@@ -144,8 +144,10 @@ public class ConceptIndexingHandler {
 		for ( Locale locale : prefLabel.keySet()) {
 			pType.addItemFieldName(DynamicName.getDynamicFieldPart(prefLabel.get(locale)));
 		}
-		// add 
-		pType.addItemFieldName(DynamicName.getDynamicFieldPart(property.getShortName()));
+		// add short name when set 
+		if ( property.getShortName()!= null) {
+			pType.addItemFieldName(DynamicName.getDynamicFieldPart(property.getShortName()));
+		}
 		pType.addItemFieldName(DynamicName.getDynamicFieldPart(property.getLocalName()));
 		// map the description
 		handleConceptDescription(property, pType);
