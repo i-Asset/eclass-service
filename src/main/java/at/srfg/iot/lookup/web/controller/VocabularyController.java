@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import at.srfg.iot.classification.api.SemanticLookupService;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.lookup.service.onto.OntologyService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
 
+@Api
 @RestController
-public class OntologyController {
+public class VocabularyController {
 	@Autowired
 	private OntologyService onto;
 	/**
@@ -32,6 +35,7 @@ public class OntologyController {
 			method = RequestMethod.POST,
 			path="/vocabulary", consumes = {"application/rdf+xml", "application/turtle"})
 	public Boolean upload(
+			@ApiIgnore
 			@RequestHeader(value="Content-Type", required = false, defaultValue = "application/rdf+xml")
 			String mimeType,
 			@RequestParam("nameSpace") 
