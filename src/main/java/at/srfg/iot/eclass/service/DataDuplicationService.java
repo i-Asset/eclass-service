@@ -187,8 +187,8 @@ public class DataDuplicationService {
 		ConceptPropertyUnit target = new ConceptPropertyUnit(eClass.getIrdiUN());
 		//target.setVersionDate(eClass.getVersionDate());
 		//target.setRevisionNumber(eClass.get);
-		target.setDefinition(Locale.ENGLISH, eClass.getDefinition());
 		target.setPreferredLabel(Locale.ENGLISH, eClass.getStructuredNaming());
+		target.setDefinition(Locale.ENGLISH, eClass.getDefinition());
 		target.setComment(Locale.ENGLISH, eClass.getComment());
 		target.setSiName(eClass.getSiName());
 		target.setSiNotation(eClass.getSiNotation());
@@ -210,8 +210,8 @@ public class DataDuplicationService {
 		target.setReference(source.getReference());
 		target.setShortName(source.getShortName());
 		target.setValue(source.getPreferredName());
-		target.setDefinition(Locale.forLanguageTag(source.getIsoLanguage()), source.getDefinition());
 		target.setPreferredLabel(Locale.forLanguageTag(source.getIsoLanguage()), source.getPreferredName());
+		target.setDefinition(Locale.forLanguageTag(source.getIsoLanguage()), source.getDefinition());
 		conceptPropertyValueRepo.save(target);
 		return target;
 	}
@@ -277,8 +277,8 @@ public class DataDuplicationService {
 		ConceptClass cClass = new ConceptClass(parent, eClass.getIrdiCC());
 		cClass.setVersionDate(eClass.getVersionDate());
 		cClass.setRevisionNumber(eClass.getRevisionNumber());
-		cClass.setDefinition(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getDefinition());
 		cClass.setPreferredLabel(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getPreferredName());
+		cClass.setDefinition(Locale.forLanguageTag(eClass.getIsoLanguageCode()), eClass.getDefinition());
 		cClass.setNote(eClass.getNote());
 		cClass.setRemark(eClass.getRemark());
 		cClass.setShortName(eClass.getCodedName());
