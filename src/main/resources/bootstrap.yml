@@ -63,3 +63,5 @@ nimble:
   corsEnabled: true
   platformHost: ${ECLASS_SERVICE_URL:http://localhost:8084}
 
+iAsset:
+  nameSpace: ${ONTOLOGY_NAMESPACE:http://iasset.salzburgresearch.at/onto/}

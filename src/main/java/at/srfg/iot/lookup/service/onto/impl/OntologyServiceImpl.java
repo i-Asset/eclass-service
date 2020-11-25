@@ -29,8 +29,10 @@ import org.apache.jena.vocabulary.SKOS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import at.srfg.indexing.model.common.DynamicName;
 import at.srfg.iot.classification.model.ConceptBase;
 import at.srfg.iot.classification.model.ConceptClass;
 import at.srfg.iot.classification.model.ConceptProperty;
@@ -43,6 +45,8 @@ import at.srfg.iot.lookup.service.onto.OntologyService;
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
+	@Value("${iAsset.nameSpace:}")
+	private String nameSpace;
 	@Autowired
 	SemanticIndexing indexer;
 	
@@ -156,13 +160,15 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 	private ConceptClass processConceptClass(OntModel model, final OntClass clazz, List<ConceptProperty> availableProps) {
 		if (! (clazz.isAnon() || clazz.isOntLanguageTerm())) {
-			ConceptClass index = conceptClassService.getConcept(clazz.getURI())
+			String localName = localNameFromPrefLabel(clazz);
+			
+			ConceptClass index = conceptClassService.getConcept(nameSpace + localName)
 					.orElseGet(new Supplier<ConceptClass>() {
 
 						@Override
 						public ConceptClass get() {
 							// TODO Auto-generated method stub
-							ConceptClass cc = new ConceptClass(clazz.getURI());
+							ConceptClass cc = new ConceptClass(nameSpace + localName);
 							if ( clazz.getSuperClass() != null ) {
 								cc.setParentElement(processConceptClass(model, clazz.getSuperClass(), availableProps));
 							}
@@ -173,7 +179,7 @@ public class OntologyServiceImpl implements OntologyService {
 			// process the labels
 			processLabels(index, clazz);
 			// use the local name as short name
-			index.setShortName(clazz.getLocalName());
+			index.setShortName(localName);
 			conceptClassService.setConcept(index);
 			return index;
 		}
@@ -183,17 +189,25 @@ public class OntologyServiceImpl implements OntologyService {
 	private DataTypeEnum fromRange(OntResource range) {
 		return DataTypeEnum.STRING;
 	}
-
+	private String localNameFromPrefLabel(OntResource resource) {
+    	// 
+    	String localName = resource.getLocalName();
+    	Map<Locale, String> pref = obtainMultilingualValues(resource, RDFS.label, DC.title, SKOS.prefLabel);
+    	if (pref.containsKey(Locale.ENGLISH)) {
+    		localName = DynamicName.getDynamicFieldPart(pref.get(Locale.ENGLISH));
+    	}
+		return localName;
+	}
     private ConceptProperty processProperty(OntModel model, OntProperty prop) {
-    	// find the existing property or create a new one
-        ConceptProperty index = propertyService.getConcept(prop.getURI())
-        		.orElse(new ConceptProperty(prop.getURI()));
+    	String localName = localNameFromPrefLabel(prop);
+        ConceptProperty index = propertyService.getConcept(nameSpace +localName)
+        		.orElse(new ConceptProperty(nameSpace + localName));
         // process the labels
         processLabels(index, prop);
         //
         
         index.setDataType(fromRange(prop.getRange()));
-
+        index.setShortName(localName);
         propertyService.setConcept(index);
         return index;
     }
