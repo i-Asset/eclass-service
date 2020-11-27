@@ -27,3 +27,4 @@ When running in a cloud environment, the system integrates with an instance of t
   
  The Service may be verified online [iAsset-Staging](http://iasset.salzburgresearch.at/semantic-lookup-service/actuator/info)
  
+ Disable SOLR autloading
