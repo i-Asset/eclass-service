@@ -8,4 +8,5 @@ import at.srfg.iot.classification.model.ConceptClass;
 public interface ConceptClassRepository extends ConceptRepository<ConceptClass>{
 	List<ConceptClass> findByLevelAndCodedNameLike(int level, String codedName);
 	Optional<ConceptClass> findByLevelAndCodedName(int level, String codedName);
+	List<ConceptClass> findByParentElement(ConceptClass parent);
 }

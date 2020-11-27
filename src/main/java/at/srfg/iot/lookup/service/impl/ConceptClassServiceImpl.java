@@ -22,6 +22,7 @@ import at.srfg.iot.lookup.service.ConceptClassService;
 import at.srfg.iot.lookup.service.PropertyService;
 import at.srfg.iot.lookup.service.indexing.SemanticIndexer;
 
+@Transactional
 @Service
 public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> implements ConceptClassService {
 	@Autowired
@@ -55,6 +56,7 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 		toStore.setNote(newConcept.getNote());
 		toStore.setRemark(newConcept.getRemark());
 		toStore.setRevisionNumber(newConcept.getRevisionNumber());
+		toStore.setCategory(newConcept.getCategory());
 		// 
 		toStore.setCodedName(newConcept.getCodedName());
 		toStore.setLevel(newConcept.getLevel());
@@ -103,43 +105,46 @@ public class ConceptClassServiceImpl extends ConceptServiceImpl<ConceptClass> im
 	}
 
 	@Override
-	public ConceptClass setConcept(ConceptClass property, ConceptClass updated) {
-		property.setPreferredLabel(updated.getPreferredLabel());
-		property.setAlternateLabel(updated.getAlternateLabel());
-		property.setHiddenLabel(updated.getHiddenLabel());
-		property.setDefinition(updated.getDefinition());
-		property.setComment(updated.getComment());
+	public ConceptClass setConcept(ConceptClass entity, ConceptClass updated) {
+		entity.setPreferredLabel(updated.getPreferredLabel());
+		entity.setAlternateLabel(updated.getAlternateLabel());
+		entity.setHiddenLabel(updated.getHiddenLabel());
+		entity.setDefinition(updated.getDefinition());
+		entity.setComment(updated.getComment());
+		// category
+		if (! Strings.isNullOrEmpty(updated.getCategory())) {
+			entity.setCategory(updated.getCategory());
+		}
 		// note
 		if (! Strings.isNullOrEmpty(updated.getNote())) {
-			property.setNote(updated.getNote());
+			entity.setNote(updated.getNote());
 		}
 		// remark
 		if (! Strings.isNullOrEmpty(updated.getRemark())) {
-			property.setRemark(updated.getRemark());
+			entity.setRemark(updated.getRemark());
 		}
 		// shortName
 		if (! Strings.isNullOrEmpty(updated.getShortName())) {
-			property.setShortName(updated.getShortName());
+			entity.setShortName(updated.getShortName());
 		}
 		// reference
 		if (! Strings.isNullOrEmpty(updated.getCodedName())) {
-			property.setCodedName(updated.getCodedName());
+			entity.setCodedName(updated.getCodedName());
 		}
 		// deal with parent element
 		if ( updated.getParentElement()!= null) {
 			Optional<ConceptClass> parent = setConcept(updated.getParentElement()); 
 			// parent "should be" present
 			if (parent.isPresent()) {
-				property.setParentElement(parent.get());
+				entity.setParentElement(parent.get());
 			}
 		}
 		//
 //		indexer.store(property);
 		//
-		return typeRepository.save(property);
+		return typeRepository.save(entity);
 	}
 
-	@Transactional
 	@Override
 	public Optional<ConceptClass> setConcept(ConceptClass updated) {
 		Optional<ConceptClass> stored = getStoredConcept(updated);

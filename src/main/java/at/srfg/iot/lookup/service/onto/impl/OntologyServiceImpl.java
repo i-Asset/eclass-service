@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -115,6 +116,7 @@ public class OntologyServiceImpl implements OntologyService {
 			 * mapping with classes 
 			 */
 			List<ConceptProperty> indexedProp = new ArrayList<>();
+			Map<String, ConceptClass> indexedClass = new HashMap<>();
 			/*
 			 * Process all ontology properties, index them and fill
 			 * the list of indexedProp
@@ -134,59 +136,48 @@ public class OntologyServiceImpl implements OntologyService {
 					}
 				}
 			}
-			/*
-			 * process all ontology classes, index them and map all
-			 * properties applicable to the class 
-			 */
-			Iterator<OntClass> classes = ontModel.listClasses();
-			while ( classes.hasNext()) {
-				OntClass c = classes.next();
-				// restrict import to namespace list provided
+			Iterator<OntClass> rootIterator = ontModel.listHierarchyRootClasses();
+			while (rootIterator.hasNext()) {
+				OntClass c = rootIterator.next();
 				if ( nameSpaces.isEmpty() || nameSpaces.contains(c.getNameSpace())) {
 					
 					if ( !c.isOntLanguageTerm()) {
-						ConceptClass clazz = processConceptClass(ontModel, c, indexedProp);
+						String localName = localNameFromPrefLabel(c);
+						System.out.println("Processing " + c.getURI() + " - " + localName);
+						processSubClasses(localName, null, c, indexedProp);
 						
-//						if ( clazz != null) {
-//							conceptClassService.setConcept(clazz);
-//						}
 					}
 				}
+				
 			}
+
 		} finally {
 			ontModel.close();
 		}
 
 	}
-	private ConceptClass processConceptClass(OntModel model, final OntClass clazz, List<ConceptProperty> availableProps) {
-		if (! (clazz.isAnon() || clazz.isOntLanguageTerm())) {
-			String localName = localNameFromPrefLabel(clazz);
-			
-			ConceptClass index = conceptClassService.getConcept(nameSpace + localName)
+	private void processSubClasses(final String category, final ConceptClass parentClass, final OntClass root, List<ConceptProperty> availableProps) {
+		Iterator<OntClass> subIter = root.listSubClasses(true);
+		
+		while ( subIter.hasNext() ) {
+			OntClass sub = subIter.next();
+			String localName = localNameFromPrefLabel(sub);
+			ConceptClass subCC = conceptClassService.getConcept(nameSpace, localName)
 					.orElseGet(new Supplier<ConceptClass>() {
-
-						@Override
 						public ConceptClass get() {
-							// TODO Auto-generated method stub
-							ConceptClass cc = new ConceptClass(nameSpace + localName);
-							if ( clazz.getSuperClass() != null ) {
-								cc.setParentElement(processConceptClass(model, clazz.getSuperClass(), availableProps));
-							}
-							return cc;
+							return new ConceptClass(parentClass, nameSpace+localName);
 						}
 					});
-			
-			// process the labels
-			processLabels(index, clazz);
-			// use the local name as short name
-			index.setShortName(localName);
-			conceptClassService.setConcept(index);
-			return index;
+			subCC.setShortName(localName);
+			subCC.setCategory(category);
+			processLabels(subCC, sub);
+			Optional<ConceptClass> cc =  conceptClassService.setConcept(subCC);
+			if ( cc.isPresent()) {
+				processSubClasses(category, cc.get(), sub, availableProps);
+			}
 		}
-		// 
-		return null;
 	}
-	private DataTypeEnum fromRange(OntResource range) {
+		private DataTypeEnum fromRange(OntResource range) {
 		return DataTypeEnum.STRING;
 	}
 	private String localNameFromPrefLabel(OntResource resource) {
@@ -278,55 +269,5 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		return languageMap;
 
-	}
-	/**
-	 * Extract all superclasses of a given class
-	 * @param cls
-	 * @return
-	 */
-	private Set<String> getSuperClasses(OntClass cls) {
-		return getSuperClasses(cls, false);
-	}
-	private Set<String> getSuperClasses(OntClass cls, boolean direct) {
-		Set<String> sup = new HashSet<>();
-		Iterator<OntClass> iter = cls.listSuperClasses(direct);
-		while (iter.hasNext()) {
-			OntClass superClass = iter.next();
-			if (! superClass.isAnon()) {
-//				if (!superClass.getNameSpace().equals(RDFS.uri))
-				// exclude rdfs, rdf, owl
-				if (!superClass.isOntLanguageTerm()) {
-					sup.add(superClass.getURI());
-				}
-			}
-		}
-		return sup;
-	}
-
-	private int getLevel(OntClass cls) {
-		if ( cls.getSuperClass()!= null) {
-			return 1 + getLevel(cls.getSuperClass());
-		}
-		return 0;
-	}
-
-	/**
-	 * Helper method to identify all child classes
-	 * @param cls
-	 * @return
-	 */
-	private Set<String> getSubClasses(OntClass cls) {
-		return getSubClasses(cls, false);
-	}
-	private Set<String> getSubClasses(OntClass cls, boolean direct) {
-		Set<String> sub = new HashSet<>();
-		Iterator<OntClass> iter = cls.listSubClasses(direct);
-		while (iter.hasNext()) {
-			OntClass subClass = iter.next();
-			if (subClass.isURIResource()) {
-				sub.add(subClass.getURI());
-			}
-		}
-		return sub;
 	}
 }
