@@ -24,6 +24,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.ErrorHandlerFactory;
+import org.apache.jena.sparql.function.library.namespace;
 import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
@@ -158,14 +159,14 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 	private void processSubClasses(final String category, final ConceptClass parentClass, final OntClass root, List<ConceptProperty> availableProps) {
 		Iterator<OntClass> subIter = root.listSubClasses(true);
-		
 		while ( subIter.hasNext() ) {
 			OntClass sub = subIter.next();
 			String localName = localNameFromPrefLabel(sub);
-			ConceptClass subCC = conceptClassService.getConcept(nameSpace, localName)
+			String fullUri = String.format("%s%s/%s", nameSpace, category, localName);
+			ConceptClass subCC = conceptClassService.getConcept(fullUri)
 					.orElseGet(new Supplier<ConceptClass>() {
 						public ConceptClass get() {
-							return new ConceptClass(parentClass, nameSpace+localName);
+							return new ConceptClass(parentClass, fullUri);
 						}
 					});
 			subCC.setShortName(localName);
