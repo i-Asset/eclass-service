@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.ConceptClassProperty;
-import at.srfg.iot.classification.model.ConceptClassPropertyPK;
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.DataTypeEnum;
-import at.srfg.iot.classification.model.ConceptProperty;
-import at.srfg.iot.classification.model.ConceptPropertyUnit;
-import at.srfg.iot.classification.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClassProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClassPropertyPK;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyUnit;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.model.DataTypeEnum;
 import at.srfg.iot.eclass.model.ClassificationClass;
 import at.srfg.iot.eclass.model.PropertyDefinition;
 import at.srfg.iot.eclass.repository.ClassificationClassPropertyRepository;
@@ -53,7 +53,7 @@ public class DataDuplicationService {
 	@Autowired
 	private ConceptRepository<ConceptPropertyUnit> conceptPropertyUnitRepo;
 	@Autowired
-	private ConceptRepository<at.srfg.iot.classification.model.ConceptPropertyValue> conceptPropertyValueRepo;
+	private ConceptRepository<ConceptPropertyValue> conceptPropertyValueRepo;
 	@Autowired 
 	private ConceptClassRepository conceptRepository;
 	

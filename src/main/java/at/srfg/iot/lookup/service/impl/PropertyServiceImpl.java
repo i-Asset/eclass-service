@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptClassProperty;
-import at.srfg.iot.classification.model.ConceptProperty;
-import at.srfg.iot.classification.model.ConceptPropertyUnit;
-import at.srfg.iot.classification.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClassProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyUnit;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyValue;
 import at.srfg.iot.eclass.service.DataDuplicationService;
 import at.srfg.iot.lookup.repository.ClassPropertyValueRepository;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;

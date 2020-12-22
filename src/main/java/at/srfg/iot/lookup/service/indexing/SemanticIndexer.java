@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
 /**
  * Component triggering the indexation of modified data
  * with the indexing service.

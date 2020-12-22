@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
-import at.srfg.iot.classification.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
 
 public interface ConceptRepository<T extends ConceptBase> extends CrudRepository<T, Long> {
 	boolean existsByConceptId(String conceptId);

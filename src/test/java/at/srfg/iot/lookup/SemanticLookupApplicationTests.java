@@ -1,7 +1,5 @@
 package at.srfg.iot.lookup;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Locale;
 
 import org.junit.Test;
@@ -10,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import at.srfg.iot.classification.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 
 @RunWith(SpringRunner.class)

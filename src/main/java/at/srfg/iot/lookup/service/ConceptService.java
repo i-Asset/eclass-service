@@ -2,7 +2,7 @@ package at.srfg.iot.lookup.service;
 
 import java.util.Optional;
 
-import at.srfg.iot.classification.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
 
 public interface ConceptService<T extends ConceptBase> {
 	/**

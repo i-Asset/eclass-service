@@ -12,19 +12,17 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import at.srfg.indexing.model.common.ClassType;
-import at.srfg.indexing.model.common.Concept;
-import at.srfg.indexing.model.common.DynamicName;
-import at.srfg.indexing.model.common.PropertyType;
-import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.solr.model.model.common.ClassType;
+import at.srfg.iot.common.solr.model.model.common.Concept;
+import at.srfg.iot.common.solr.model.model.common.DynamicName;
+import at.srfg.iot.common.solr.model.model.common.PropertyType;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.repository.ConceptClassPropertyRepository;
 import at.srfg.iot.lookup.repository.ConceptClassRepository;

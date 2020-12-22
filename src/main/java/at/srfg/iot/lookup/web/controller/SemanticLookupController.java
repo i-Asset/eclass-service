@@ -7,12 +7,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.srfg.iot.classification.api.SemanticLookupService;
-import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptProperty;
-import at.srfg.iot.classification.model.ConceptPropertyUnit;
-import at.srfg.iot.classification.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.api.SemanticLookupService;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyUnit;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyValue;
 import at.srfg.iot.lookup.service.ConceptClassService;
 import at.srfg.iot.lookup.service.ConceptService;
 import at.srfg.iot.lookup.service.PropertyService;
@@ -47,6 +47,7 @@ public class SemanticLookupController implements SemanticLookupService {
 	@Override
 	public Optional<ConceptBase> getConcept(String identifier) {
 		// read the concept
+		System.out.println("Search for "+identifier);
 		return conceptBase.getConcept(identifier);
 	}
 	@Override

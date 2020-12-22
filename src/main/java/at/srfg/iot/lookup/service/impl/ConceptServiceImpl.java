@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
 import at.srfg.iot.lookup.repository.ConceptRepository;
 import at.srfg.iot.lookup.service.ConceptService;
 /**

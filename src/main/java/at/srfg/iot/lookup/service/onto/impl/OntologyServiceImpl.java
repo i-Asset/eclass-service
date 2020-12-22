@@ -24,7 +24,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.ErrorHandlerFactory;
-import org.apache.jena.sparql.function.library.namespace;
 import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
@@ -34,11 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import at.srfg.indexing.model.common.DynamicName;
-import at.srfg.iot.classification.model.ConceptBase;
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptProperty;
-import at.srfg.iot.classification.model.DataTypeEnum;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.DataTypeEnum;
+import at.srfg.iot.common.solr.model.model.common.DynamicName;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.service.ConceptClassService;
 import at.srfg.iot.lookup.service.PropertyService;
@@ -178,7 +177,7 @@ public class OntologyServiceImpl implements OntologyService {
 			}
 		}
 	}
-		private DataTypeEnum fromRange(OntResource range) {
+	private DataTypeEnum fromRange(OntResource range) {
 		return DataTypeEnum.STRING;
 	}
 	private String localNameFromPrefLabel(OntResource resource) {

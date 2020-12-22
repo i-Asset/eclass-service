@@ -1,6 +1,6 @@
 package at.srfg.iot.lookup.service.indexing;
 
-import at.srfg.iot.classification.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
 
 public class ConceptClassEvent extends IndexingEvent<ConceptClass> {
 

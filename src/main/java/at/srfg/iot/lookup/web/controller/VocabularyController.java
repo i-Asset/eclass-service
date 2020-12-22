@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.srfg.iot.classification.api.SemanticLookupService;
-import at.srfg.iot.classification.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.api.SemanticLookupService;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
 import at.srfg.iot.lookup.service.onto.OntologyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

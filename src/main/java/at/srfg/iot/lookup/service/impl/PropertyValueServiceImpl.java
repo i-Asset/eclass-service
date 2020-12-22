@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 
-import at.srfg.iot.classification.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyValue;
 import at.srfg.iot.lookup.service.PropertyValueService;
 
 @Service

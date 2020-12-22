@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import at.srfg.indexing.model.common.ClassType;
-import at.srfg.indexing.model.common.PropertyType;
+import at.srfg.iot.common.solr.model.model.common.ClassType;
+import at.srfg.iot.common.solr.model.model.common.PropertyType;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 /**

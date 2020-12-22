@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import at.srfg.iot.classification.model.ConceptClass;
-import at.srfg.iot.classification.model.ConceptProperty;
-import at.srfg.iot.classification.model.ConceptPropertyValue;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptPropertyValue;
 
 public interface ConceptClassService extends ConceptService<ConceptClass> {
 	/**
