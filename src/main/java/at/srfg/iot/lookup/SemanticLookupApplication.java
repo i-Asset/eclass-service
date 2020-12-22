@@ -24,7 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EntityScan({
 		// holds the "updatable" model 
-		"at.srfg.iot.classification.model",
+		"at.srfg.iot.common.datamodel.semanticlookup.model",
 		// holds the E-Class Entities for data duplication - eClass is readonly
 		"at.srfg.iot.eclass.model"})
 @ComponentScan({
