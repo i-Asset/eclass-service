@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.jena.ontology.OntClass;
@@ -24,6 +25,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.ErrorHandlerFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
@@ -35,18 +37,22 @@ import org.springframework.stereotype.Service;
 
 import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptBase;
 import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClass;
+import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptClassProperty;
 import at.srfg.iot.common.datamodel.semanticlookup.model.ConceptProperty;
 import at.srfg.iot.common.datamodel.semanticlookup.model.DataTypeEnum;
 import at.srfg.iot.common.solr.model.model.common.DynamicName;
 import at.srfg.iot.lookup.dependency.SemanticIndexing;
 import at.srfg.iot.lookup.service.ConceptClassService;
+import at.srfg.iot.lookup.service.ConceptService;
 import at.srfg.iot.lookup.service.PropertyService;
 import at.srfg.iot.lookup.service.onto.OntologyService;
 
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
-	@Value("${iAsset.nameSpace:}")
+	@Value("${iAsset.ns.replace:}")
+	private Boolean replaceNamespace;
+	@Value("${iAsset.ns.replaceWith:}")
 	private String nameSpace;
 	@Autowired
 	SemanticIndexing indexer;
@@ -55,7 +61,7 @@ public class OntologyServiceImpl implements OntologyService {
 	PropertyService propertyService;
 	@Autowired
 	ConceptClassService conceptClassService;
-
+	
 	protected static final Logger logger = LoggerFactory.getLogger(OntologyServiceImpl.class);
 
 
@@ -64,8 +70,9 @@ public class OntologyServiceImpl implements OntologyService {
 		if ( namespace != null && !namespace.isEmpty()) {
 			for (String ns : namespace) {
 				try {
-					propertyService.deleteNameSpace(ns);
-					conceptClassService.deleteNameSpace(ns);
+					long classes = conceptClassService.deleteNameSpace(ns);
+					
+					long properties = propertyService.deleteNameSpace(ns);
 				
 				// 
 					indexer.deleteConcepts(ns);
@@ -139,13 +146,15 @@ public class OntologyServiceImpl implements OntologyService {
 			Iterator<OntClass> rootIterator = ontModel.listHierarchyRootClasses();
 			while (rootIterator.hasNext()) {
 				OntClass c = rootIterator.next();
+				
 				if ( nameSpaces.isEmpty() || nameSpaces.contains(c.getNameSpace())) {
 					
 					if ( !c.isOntLanguageTerm()) {
-						String localName = localNameFromPrefLabel(c);
-						System.out.println("Processing " + c.getURI() + " - " + localName);
-						processSubClasses(localName, null, c, indexedProp);
-						
+						Optional<ConceptClass> cc = processClass(null, c);
+						if (cc.isPresent()) {
+							processProperties(cc.get(), c, indexedProp);
+							processSubClasses(cc.get(), c, indexedProp);
+						}
 					}
 				}
 				
@@ -156,26 +165,60 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 	}
-	private void processSubClasses(final String category, final ConceptClass parentClass, final OntClass root, List<ConceptProperty> availableProps) {
+	private Optional<ConceptClass> processClass(final ConceptClass parent, final OntClass ontClass) {
+		System.out.println("Processing " + ontClass.getURI() + " - " + ontClass.getLocalName());
+		String localName = replaceNamespace ? localNameFromPrefLabel(ontClass) : ontClass.getLocalName();
+		// 
+		final String fullUri = replaceNamespace ?
+				// true: replace the given namespace
+				String.format("%s%s", nameSpace, localName) :
+				// false: use the original namespace provided 
+				ontClass.getURI();
+		ConceptClass subCC = conceptClassService.getConcept(fullUri)
+				.orElseGet(new Supplier<ConceptClass>() {
+					public ConceptClass get() {
+						return new ConceptClass(parent, fullUri);
+					}
+				});
+		subCC.setShortName(localName);
+		subCC.setCategory(ontClass.getRDFType().getLocalName());
+		processLabels(subCC, ontClass);
+		return conceptClassService.setConcept(subCC);
+		
+	}
+	private void processSubClasses(final ConceptClass parentClass, final OntClass root, List<ConceptProperty> availableProps) {
 		Iterator<OntClass> subIter = root.listSubClasses(true);
 		while ( subIter.hasNext() ) {
 			OntClass sub = subIter.next();
-			String localName = localNameFromPrefLabel(sub);
-			String fullUri = String.format("%s%s/%s", nameSpace, category, localName);
-			ConceptClass subCC = conceptClassService.getConcept(fullUri)
-					.orElseGet(new Supplier<ConceptClass>() {
-						public ConceptClass get() {
-							return new ConceptClass(parentClass, fullUri);
-						}
-					});
-			subCC.setShortName(localName);
-			subCC.setCategory(category);
-			processLabels(subCC, sub);
-			Optional<ConceptClass> cc =  conceptClassService.setConcept(subCC);
+			Optional<ConceptClass> cc =  processClass(parentClass, sub);
 			if ( cc.isPresent()) {
-				processSubClasses(category, cc.get(), sub, availableProps);
+				processProperties(cc.get(), sub, availableProps);
+				//
+				processSubClasses(cc.get(), sub, availableProps);
 			}
 		}
+	}
+	
+	private void processProperties(ConceptClass cc, OntClass ontClass, List<ConceptProperty> availableProperties) {
+		List<ConceptProperty> assignedProps = new ArrayList<ConceptProperty>();
+		// detect only directly assigned properties
+		ExtendedIterator<OntProperty> prop = ontClass.listDeclaredProperties(true);
+		while (prop.hasNext()) {
+			OntProperty assignedProp = prop.next();
+			Optional<ConceptProperty> propFound = availableProperties.stream().filter(new Predicate<ConceptProperty>() {
+						@Override
+						public boolean test(ConceptProperty t) {
+							// TODO Auto-generated method stub
+							return t.getConceptId().equals(assignedProp.getURI());
+						}
+					})
+					.findFirst();
+			if ( propFound.isPresent()) {
+				assignedProps.add(propFound.get());
+			}
+		}
+		conceptClassService.setProperties(cc.getConceptId(), assignedProps);
+		
 	}
 	private DataTypeEnum fromRange(OntResource range) {
 		return DataTypeEnum.STRING;
@@ -191,14 +234,22 @@ public class OntologyServiceImpl implements OntologyService {
 	}
     private ConceptProperty processProperty(OntModel model, OntProperty prop) {
     	String localName = localNameFromPrefLabel(prop);
-        ConceptProperty index = propertyService.getConcept(nameSpace +localName)
-        		.orElse(new ConceptProperty(nameSpace + localName));
+		final String fullUri = replaceNamespace ?
+				// true: replace the given namespace
+				String.format("%s%s", nameSpace, localName) :
+				// false: use the original namespace provided 
+				prop.getURI();
+
+        ConceptProperty index = propertyService.getConcept(fullUri)
+        		.orElse(new ConceptProperty(fullUri));
         // process the labels
         processLabels(index, prop);
         //
         
         index.setDataType(fromRange(prop.getRange()));
         index.setShortName(localName);
+        
+        // deal with declaring classes
         propertyService.setConcept(index);
         return index;
     }
@@ -227,7 +278,11 @@ public class OntologyServiceImpl implements OntologyService {
 			while ( nIter.hasNext()) {
 				RDFNode node = nIter.next();
 				if ( node.isLiteral()) {
-					Locale lang = Locale.forLanguageTag(node.asLiteral().getLanguage());
+					Locale lang = Locale.ENGLISH;
+					String nodeLang = node.asLiteral().getLanguage();
+					if (nodeLang != null && !nodeLang.isEmpty()) {
+						lang = Locale.forLanguageTag(nodeLang);
+					}
 					//String lang = node.asLiteral().getLanguage();
 					
 					if (! languageMap.containsKey(lang)) {

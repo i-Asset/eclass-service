@@ -64,4 +64,6 @@ nimble:
   platformHost: ${ECLASS_SERVICE_URL:http://localhost:8084}
 
 iAsset:
-  nameSpace: ${ONTOLOGY_NAMESPACE:https://hmdp.salzburgresearch.at/}
+  ns:
+    replace: false
+    replaceWith: ${ONTOLOGY_NAMESPACE:https://secure.salzburgresearch.at/}
