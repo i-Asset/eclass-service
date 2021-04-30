@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="classification_class")
+@Table(name="eclass_classification_class")
 @NamedQuery(name="ClassificationClass.findAll", query="SELECT c FROM ClassificationClass c")
 public class ClassificationClass implements Serializable {
 	private static final long serialVersionUID = 1L;

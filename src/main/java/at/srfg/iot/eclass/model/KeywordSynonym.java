@@ -9,7 +9,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="keyword_synonym")
+@Table(name="eclass_keyword_synonym")
 @NamedQuery(name="KeywordSynonym.findAll", query="SELECT k FROM KeywordSynonym k")
 public class KeywordSynonym implements Serializable {
 	private static final long serialVersionUID = 1L;

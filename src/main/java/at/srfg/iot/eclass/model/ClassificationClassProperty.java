@@ -9,7 +9,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="classification_class_property")
+@Table(name="eclass_classification_class_property")
 @NamedQuery(name="ClassificationClassProperty.findAll", query="SELECT c FROM ClassificationClassProperty c")
 public class ClassificationClassProperty implements Serializable {
 	private static final long serialVersionUID = 1L;

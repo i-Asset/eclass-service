@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="unit")
+@Table(name="eclass_unit")
 @NamedQuery(name="PropertyUnit.findAll", query="SELECT u FROM PropertyUnit u")
 public class PropertyUnit implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -20,13 +20,13 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="property")
+@Table(name="eclass_property")
 @NamedQuery(name="PropertyDefinition.findAll", query="SELECT p FROM PropertyDefinition p")
 public class PropertyDefinition implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="irdipr")
+	@Column(name="irdipr", nullable=false)
 	private String irdiPR;
 	@Column(name="attributetype")
 	private String attributeType;
@@ -78,7 +78,7 @@ public class PropertyDefinition implements Serializable {
 	//bi-directional many-to-many association to EclassValue
 	@ManyToMany
 	@JoinTable(
-		name="property_value"
+		name="eclass_property_value"
 		, joinColumns={
 			@JoinColumn(name="irdipr")
 			}

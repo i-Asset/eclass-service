@@ -90,7 +90,7 @@ public class DefaultDataService {
 		
 
 		Optional<ConceptProperty> optBrokerType = propRepo.findByConceptId("http://iasset.salzburgresearch.at/data/messageBroker/brokerType");
-		ConceptProperty brokerType = optHosts.orElseGet(new Supplier<ConceptProperty>() {
+		ConceptProperty brokerType = optBrokerType.orElseGet(new Supplier<ConceptProperty>() {
 
 			@Override
 			public ConceptProperty get() {
@@ -102,6 +102,7 @@ public class DefaultDataService {
 				
 				prop.setDataType(DataTypeEnum.STRING);
 				
+				prop = propRepo.save(prop);
 				prop.addPropertyValue(mqtt);
 				prop.addPropertyValue(kafka);
 				return propRepo.save(prop);

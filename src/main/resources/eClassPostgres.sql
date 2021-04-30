@@ -1,7 +1,7 @@
 SET search_path = public;
 SET client_encoding = 'UTF8';
 
-CREATE TABLE Classification_Class (
+CREATE TABLE eClass_Classification_Class (
 	Supplier VARCHAR(6),
 	IdCC VARCHAR(9),
 	Identifier VARCHAR(6),
@@ -22,7 +22,7 @@ CREATE TABLE Classification_Class (
 );
 
 
-CREATE TABLE Unit (
+CREATE TABLE eClass_Unit (
 	StructuredNaming VARCHAR(1000),
 	ShortName VARCHAR(1000),
 	Definition VARCHAR(1000),
@@ -40,7 +40,7 @@ CREATE TABLE Unit (
 );
 
 
-CREATE TABLE Property (
+CREATE TABLE eClass_Property (
 	Supplier VARCHAR(6),
 	IdPR VARCHAR(9),
 	Identifier VARCHAR(6),
@@ -54,7 +54,7 @@ CREATE TABLE Property (
 	Note VARCHAR(1023),
 	Remark VARCHAR(1023),
 	PreferredSymbol VARCHAR(17),
-	IrdiUN VARCHAR(20) REFERENCES Unit(IrdiUN) ON UPDATE RESTRICT ON DELETE RESTRICT,
+	IrdiUN VARCHAR(20) REFERENCES eClass_Unit(IrdiUN) ON UPDATE RESTRICT ON DELETE RESTRICT,
 	ISOLanguageCode VARCHAR(2),
 	ISOCountryCode VARCHAR(2),
 	Category VARCHAR(3),
@@ -67,7 +67,7 @@ CREATE TABLE Property (
 
 
 
-CREATE TABLE Keyword_Synonym (
+CREATE TABLE eClass_Keyword_Synonym (
 	SupplierKWSupplierSY VARCHAR(6),
 	Identifier VARCHAR(6),
 	VersionNumber VARCHAR(3),
@@ -102,29 +102,29 @@ CREATE TABLE eClass_Value (
 );
 
 
-CREATE TABLE  Classification_Class_Property (
+CREATE TABLE  eClass_Classification_Class_Property (
 	SupplierIdCC VARCHAR(6),
 	IdCC VARCHAR(9),
 	ClassCodedName VARCHAR(8),
 	SupplierIdPR VARCHAR(6),
 	IdPR VARCHAR(9),
-	IrdiCC VARCHAR(20) REFERENCES Classification_Class (IrdiCC) ON UPDATE RESTRICT ON DELETE CASCADE,
-	IrdiPR VARCHAR(20) REFERENCES Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
+	IrdiCC VARCHAR(20) REFERENCES eClass_Classification_Class (IrdiCC) ON UPDATE RESTRICT ON DELETE CASCADE,
+	IrdiPR VARCHAR(20) REFERENCES eClass_Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
 	PRIMARY KEY(IrdiCC, IrdiPR)
 );
 
 
-CREATE TABLE  Classification_Class_Property_Value (
-	IrdiCC VARCHAR(20) REFERENCES Classification_Class (IrdiCC) ON UPDATE RESTRICT ON DELETE CASCADE,
-	IrdiPR VARCHAR(20) REFERENCES Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
+CREATE TABLE  eClass_Classification_Class_Property_Value (
+	IrdiCC VARCHAR(20) REFERENCES eClass_Classification_Class (IrdiCC) ON UPDATE RESTRICT ON DELETE CASCADE,
+	IrdiPR VARCHAR(20) REFERENCES eClass_Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
 	IrdiVA VARCHAR(20) REFERENCES eClass_Value (IrdiVA) ON UPDATE RESTRICT ON DELETE CASCADE,
 	Value_Constraint VARCHAR (5),
 	PRIMARY KEY(IrdiCC, IrdiPR, IrdiVA)
 );
 
 
-CREATE TABLE Property_Value (
-	IrdiPR VARCHAR(20) REFERENCES Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
+CREATE TABLE eClass_Property_Value (
+	IrdiPR VARCHAR(20) REFERENCES eClass_Property (IrdiPR) ON UPDATE RESTRICT ON DELETE CASCADE,
 	IrdiVA VARCHAR(20) REFERENCES eClass_Value (IrdiVA) ON UPDATE RESTRICT ON DELETE CASCADE,
 	PRIMARY KEY(IrdiPR, IrdiVA)
 );
